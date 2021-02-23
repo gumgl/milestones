@@ -31,7 +31,8 @@ export const Generator =
 
 export const Generators = [
   {
-    name:"powers10",
+    id: "powers10",
+    name: "10^x",
     gf: function*() {
       for (let n = 1; ; n++)
         yield {
@@ -43,7 +44,8 @@ export const Generators = [
     oeis: "A011557"
   },
   {
-    name:"powers2",
+    id: "powers2",
+    name: "2^n",
     gf: function*() {
       for (let n = 1; ; n++)
         yield {
@@ -55,7 +57,8 @@ export const Generators = [
     oeis: "A000079"
   },
   {
-    name:"repdigit",
+    id: "repdigit",
+    name: "[n]^x (repeated digit)",
     gf: function*() {
       for (let b=1; ; b=b*10+1)
         for (let n=1; n<=9; n++)
@@ -68,7 +71,8 @@ export const Generators = [
     oeis: "A010785"
   },
   {
-    name:"n10x",
+    id:"n10x",
+    name: "n * 10^x (for small n)",
     gf: function*() {
       for (let x=1; ; x++)
         for (let n=2; n<=9; n++)
@@ -81,7 +85,8 @@ export const Generators = [
     oeis: "A037124"
   },
   {
-    name:"factorial",
+    id: "factorial",
+    name: "x! (factorial)",
     gf: function*() {
       for (let n = 1, m = 1; ; n++, m *= n)
         yield {
@@ -93,7 +98,8 @@ export const Generators = [
     oeis: "A005150"
   },
   {
-    name:"lookandsay",
+    id:"lookandsay",
+    name: "Look-and-say terms",
     gf: function*() {
       let nextTerm = (term) => {
         let result = "";

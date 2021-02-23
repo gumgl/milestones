@@ -47,77 +47,48 @@ function App() {
           value={refDate.toISOString().split('T')[0]}
           onChange={handleDateInputChange} />
       </label>
-      <fieldset>
-      <legend>What do you care about?</legend>
-      <ul>
-        <li>
-          <label>
-            <input
-              name="powers10"
-              type="checkbox"
-              checked={genOptions.powers10}
-              onChange={handleGenInputChange} />
-            10^x
-        </label>
-        </li>
-        <li>
-          <label>
-            <input
-              name="n10x"
-              type="checkbox"
-              checked={genOptions.n10x}
-              onChange={handleGenInputChange} />
-            n * 10^x (for small n)
-          </label>
-        </li>
-        <li>
-          <label>
-            <input
-              name="repdigit"
-              type="checkbox"
-              checked={genOptions.repdigit}
-              onChange={handleGenInputChange} />
-            [n]^x (repeated digit)
-          </label>
-        </li>
-        <li>
-          <label>
-            <input
-              name="powers2"
-              type="checkbox"
-              checked={genOptions.powers2}
-              onChange={handleGenInputChange} />
-            2^x
-          </label>
-        </li>
-        <li>
-          <label>
-            <input
-              name="factorial"
-              type="checkbox"
-              checked={genOptions.factorial}
-              onChange={handleGenInputChange} />
-            x! (factorial)
-          </label>
-        </li>
-        <li>
-          <label>
-            <input
-              name="lookandsay"
-              type="checkbox"
-              checked={genOptions.lookandsay}
-              onChange={handleGenInputChange} />
-            Look-and-say terms (<a href="https://oeis.org/A005150" target="_blank" rel="noreferrer">A005150</a>)
-          </label>
-        </li>
-      </ul>
-      </fieldset>
+      <SequenceOptionsList
+        genOptions={genOptions}
+        handleGenInputChange={handleGenInputChange}
+        />
     </form>
     <p>Since {refDate.toDateString()}...</p>
 
     <MilestonesList refDate={refDate} genOptions={genOptions} />
     
     </div>
+  );
+}
+
+function SequenceOptionsList(props) {
+  let list = Generators.map(g => 
+    <li key={g.id}>
+      <SequenceOption
+        generator={g}
+        genOptions={props.genOptions}
+        handleGenInputChange={props.handleGenInputChange}
+        />
+    </li>);
+
+  return (
+    <fieldset>
+    <legend>What do you care about?</legend>
+    <ul>{list}</ul>
+    </fieldset>
+  );
+}
+
+function SequenceOption(props) {
+  const g = props.generator;
+  return (
+    <label>
+      <input
+        name={g.id}
+        type="checkbox"
+        checked={props.genOptions[g.id]}
+        onChange={props.handleGenInputChange} />
+      {g.name} <a href={"https://oeis.org/" + g.oeis} target="_blank" rel="noreferrer">{g.oeis}</a>
+    </label>
   );
 }
 
@@ -144,7 +115,7 @@ function computeMilestones(refDate, genOptions) {
 
   for (const unit of units)
     for (const g of Generators)
-      if (genOptions[g.name]) {
+      if (genOptions[g.id]) {
         let future = Generator.filter((item) => refTime + item.value * unit.ms > now - 1000*60*60*24*365, g.gf);
         let nearFuture = Generator.takeWhile(
           (item) => refTime + item.value * unit.ms < now + 1000*60*60*24*365*10,
