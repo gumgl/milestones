@@ -89,7 +89,7 @@ function SequenceOption(props) {
 function MilestonesList(props) {
   let list = computeMilestones(props.refDate, props.seqOptions).map((milestone) =>
     <li key={milestone.date.getTime()+"-"+milestone.value}>
-    <span title={milestone.date}>{milestone.date.toISOString().split('T')[0]}</span>: <span title={milestone.value}>{milestone.label}</span> - <a target="_blank" rel="noreferrer" href={"https://www.wolframalpha.com/input/?i="+encodeURIComponent(props.refDate.toISOString().split('T')[0]+" + "+milestone.label)}>Verify</a></li>);
+    <span title={milestone.date}>{milestone.date.toISOString().split('T')[0]}</span>: <span title={milestone.explanation}>{milestone.label}</span> - <a target="_blank" rel="noreferrer" href={"https://www.wolframalpha.com/input/?i="+encodeURIComponent(props.refDate.toISOString().split('T')[0]+" + "+milestone.label)}>Verify</a></li>);
   return <ul>{list}</ul>;
 }
 
@@ -117,7 +117,8 @@ function computeMilestones(refDate, seqOptions) {
           );
         let tagged = nearFuture.map((item) => ({
           date: new Date(refTime + item.value * unit.ms),
-          label: s.format(item) + " " + unit.name,
+          label: s.display(item) + " " + unit.name,
+          explanation: s.explain(item),
           value: item.value
         }));
         milestones = milestones.concat(tagged);
