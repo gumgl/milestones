@@ -13,9 +13,11 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
 
+import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
-import Tooltip from '@material-ui/core/Tooltip';
+import EventIcon from '@material-ui/icons/Event';
+import FunctionsIcon from '@material-ui/icons/Functions';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -36,11 +38,7 @@ export default function App() {
   );
 
   const seqInputChange = (id) => () => {
-    //const id = e.target.name;
     const value = !seqOptions[id];
-
-    //console.log(e.target, id, value);
-    console.log(id, value);
 
     setSeqOptions({
       ...seqOptions,
@@ -84,7 +82,6 @@ export default function App() {
               />
           </FormGroup>
         </FormControl>
-        <p>Since {refDate.toDateString()}...</p>
 
         <MilestonesList refDate={refDate} seqOptions={seqOptions} />
       </div>
@@ -116,7 +113,7 @@ const useStyles = makeStyles((theme) => ({
   },
   root: {
     width: '100%',
-    maxWidth: 360,
+    maxWidth: 560,
     backgroundColor: theme.palette.background.paper,
   },
 }));
@@ -140,24 +137,23 @@ function SequenceOption(props) {
   const labelId = `checkbox-list-label-${s.id}`;
   
   return (
-    <ListItem key={s.id} name={s.id}
+    <ListItem key={s.id}
       onClick={props.seqInputChange(s.id)}
       dense button>
 
       <ListItemIcon>
         <Checkbox
           checked={props.seqOptions[s.id]}
-          //onChange={props.seqInputChange}
           name={s.id}
-          //color="primary"
           edge="start"
-          //checked={checked.indexOf(value) !== -1}
           tabIndex={-1}
           disableRipple
-          inputProps={{ 'aria-labelledby': labelId }}
+          //inputProps={{ 'aria-labelledby': labelId }}
         />
       </ListItemIcon>
-      <ListItemText id={labelId} primary={s.name} />
+      <Tooltip title={s.explanation} placement="bottom">
+        <ListItemText /*id={labelId}*/ primary={s.name} />
+      </Tooltip>
       <ListItemSecondaryAction>
         <Tooltip title={s.oeis} placement="right">
           <IconButton edge="end" aria-label="info"
@@ -172,10 +168,32 @@ function SequenceOption(props) {
 }
 
 function MilestonesList(props) {
-  let list = computeMilestones(props.refDate, props.seqOptions).map((milestone) =>
-    <li key={milestone.date.getTime()+"-"+milestone.value}>
-    <span title={milestone.date}>{milestone.date.toISOString().split('T')[0]}</span>: <span title={milestone.explanation}>{milestone.label}</span> - <a target="_blank" rel="noreferrer" href={"https://www.wolframalpha.com/input/?i="+encodeURIComponent(props.refDate.toISOString().split('T')[0]+" + "+milestone.label)}>Verify</a></li>);
-  return <ul>{list}</ul>;
+  return (<List>
+  {computeMilestones(props.refDate, props.seqOptions).map((milestone) =>
+    <Milestone refDate={props.refDate} milestone={milestone} />)
+  }</List>);
+}
+
+function Milestone(props) {
+  const milestone = props.milestone;
+
+  return (
+    <ListItem key={milestone.date.getTime()+"-"+milestone.value}>
+      <ListItemIcon>
+        <EventIcon />
+      </ListItemIcon>
+      <ListItemText primary={milestone.label} secondary={milestone.date.toDateString()} />
+      <ListItemSecondaryAction>
+        <Tooltip title="See on Wolfram|Alpha" placement="right">
+          <IconButton edge="end" aria-label="info"
+            href={`https://www.wolframalpha.com/input/?i=${encodeURIComponent(props.refDate.toISOString().split('T')[0]+" + "+milestone.label)}`}
+            target="_blank">
+            <FunctionsIcon />
+          </IconButton>
+        </Tooltip>
+      </ListItemSecondaryAction>
+    </ListItem>
+    );
 }
 
 function computeMilestones(refDate, seqOptions) {
