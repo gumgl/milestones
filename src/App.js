@@ -1,23 +1,50 @@
-import './App.css';
+//import './App.css';
 import React, {useState} from 'react';
 import {Generator, Sequences} from './Sequences';
-import { Button } from '@material-ui/core';
 
-function App() {
+import Container from '@material-ui/core/Container';
+
+import InputLabel from '@material-ui/core/InputLabel';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+
+import Checkbox from '@material-ui/core/Checkbox';
+import TextField from '@material-ui/core/TextField';
+
+import IconButton from '@material-ui/core/IconButton';
+import InfoIcon from '@material-ui/icons/Info';
+import Tooltip from '@material-ui/core/Tooltip';
+
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { makeStyles } from '@material-ui/core/styles';
+
+export default function App() {
+  const classes = useStyles();
+
   const [refDate, setRefDate] = useState(new Date(1969, 6, 24));
 
   const [seqOptions, setSeqOptions] = useState(
     Object.fromEntries(Object.values(Sequences).map(s => [s.id, false]))
   );
 
-  const seqInputChange = (event) => {
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked :
-                  target.value;
+  const seqInputChange = (id) => () => {
+    //const id = e.target.name;
+    const value = !seqOptions[id];
+
+    //console.log(e.target, id, value);
+    console.log(id, value);
 
     setSeqOptions({
       ...seqOptions,
-      [target.name]: value
+      [id]: value
     });
   };
 
@@ -31,58 +58,116 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <form>
-      <label>
-        Your date of birth: <br/>
-        <input
-          name="refDate"
-          type="date"
-          value={refDate.toISOString().split('T')[0]}
-          onChange={refDateInputChange} />
-      </label>
-      <SequenceOptionsList
-        seqOptions={seqOptions}
-        seqInputChange={seqInputChange}
-        />
-    </form>
-    <p>Since {refDate.toDateString()}...</p>
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div className={classes.paper}>
+        <FormControl component="fieldset" className={classes.formControl}>
+          <FormGroup>
+          <TextField
+            label="Your date of birth"
+            type="date"
+            value={refDate.toISOString().split('T')[0]}
+            className={classes.textField}
+            onChange={refDateInputChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            />
 
-    <MilestonesList refDate={refDate} seqOptions={seqOptions} />
-    
-    </div>
+          </FormGroup>
+          <FormGroup>
+            <FormLabel>What do you care about?</FormLabel>
+            <SequenceOptionsList
+              classes={classes}
+              seqOptions={seqOptions}
+              seqInputChange={seqInputChange}
+              />
+          </FormGroup>
+        </FormControl>
+        <p>Since {refDate.toDateString()}...</p>
+
+        <MilestonesList refDate={refDate} seqOptions={seqOptions} />
+      </div>
+      <a href="https://github.com/gumgl/milestones">Source</a>
+    </Container>
   );
 }
 
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    //marginTop: theme.spacing(8),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+  formControl: {
+    margin: theme.spacing(3),
+  },
+  root: {
+    width: '100%',
+    maxWidth: 360,
+    backgroundColor: theme.palette.background.paper,
+  },
+}));
+
 function SequenceOptionsList(props) {
-  let list = Sequences.map(s => 
-    <li key={s.id}>
-      <SequenceOption
-        sequence={s}
-        seqOptions={props.seqOptions}
-        seqInputChange={props.seqInputChange}
-        />
-    </li>);
+  let list = Sequences.map(s =>
+    <SequenceOption
+      key={s.id}
+      sequence={s}
+      seqOptions={props.seqOptions}
+      seqInputChange={props.seqInputChange}
+      />);
 
   return (
-    <fieldset>
-    <legend>What do you care about?</legend>
-    <ul>{list}</ul>
-    </fieldset>
+    <List className={props.classes.root} role={undefined}>{list}</List>
   );
 }
 
 function SequenceOption(props) {
   const s = props.sequence;
+  const labelId = `checkbox-list-label-${s.id}`;
+  
   return (
-    <label>
-      <input
-        name={s.id}
-        type="checkbox"
-        checked={props.seqOptions[s.id]}
-        onChange={props.seqInputChange} />
-      {s.name} <a href={"https://oeis.org/" + s.oeis} target="_blank" rel="noreferrer">{s.oeis}</a>
-    </label>
+    <ListItem key={s.id} name={s.id}
+      onClick={props.seqInputChange(s.id)}
+      dense button>
+
+      <ListItemIcon>
+        <Checkbox
+          checked={props.seqOptions[s.id]}
+          //onChange={props.seqInputChange}
+          name={s.id}
+          //color="primary"
+          edge="start"
+          //checked={checked.indexOf(value) !== -1}
+          tabIndex={-1}
+          disableRipple
+          inputProps={{ 'aria-labelledby': labelId }}
+        />
+      </ListItemIcon>
+      <ListItemText id={labelId} primary={s.name} />
+      <ListItemSecondaryAction>
+        <Tooltip title={s.oeis} placement="right">
+          <IconButton edge="end" aria-label="info"
+            href={"https://oeis.org/" + s.oeis}
+            target="_blank">
+            <InfoIcon />
+          </IconButton>
+        </Tooltip>
+      </ListItemSecondaryAction>
+    </ListItem>
   );
 }
 
@@ -128,5 +213,3 @@ function computeMilestones(refDate, seqOptions) {
 
   return milestones;
 }
-
-export default App;
