@@ -39,7 +39,8 @@ export const Generators = [
           value: Math.pow(10,n)
         };
     },
-    format: (item) => item.value.toLocaleString()//"10^" + item.params[0]
+    format: (item) => item.value.toLocaleString(),//"10^" + item.params[0]
+    oeis: "A011557"
   },
   {
     name:"powers2",
@@ -50,7 +51,8 @@ export const Generators = [
           value: Math.pow(2,n)
         };
     },
-    format: (item) => "2^" + item.params[0]
+    format: (item) => "2^" + item.params[0],
+    oeis: "A000079"
   },
   {
     name:"repdigit",
@@ -62,7 +64,8 @@ export const Generators = [
             value: b*n
           };
     },
-    format: (item) => item.value.toLocaleString()
+    format: (item) => item.value.toLocaleString(),
+    oeis: "A010785"
   },
   {
     name:"n10x",
@@ -74,7 +77,8 @@ export const Generators = [
             value: n * Math.pow(10, x)
           };
     },
-    format: (item) => item.value.toLocaleString()
+    format: (item) => item.value.toLocaleString(),
+    oeis: "A037124"
   },
   {
     name:"factorial",
@@ -85,6 +89,7 @@ export const Generators = [
           value: m
         };
     },
-    format: (item) => item.params[0] + "!"
+    format: (item) => item.params[0] + "!",
+    oeis: "A005150"
   },
 ];

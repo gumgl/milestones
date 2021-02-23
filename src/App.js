@@ -99,7 +99,7 @@ class App extends React.Component {
         </ul>
         </fieldset>
       </form>
-      <p>We are going on {this.state.refDate.toISOString().split('T')[0]}</p>
+      <p>Since {this.state.refDate.toDateString()}...</p>
 
       <MilestonesList state={this.state} />
       
@@ -111,9 +111,7 @@ class App extends React.Component {
 function MilestonesList(props) {
   let list = computeMilestones(props.state).map((milestone) =>
     <li key={milestone.date.getTime()+"-"+milestone.value}>
-    <span title={milestone.date}>{milestone.date.toISOString().split('T')[0]}</span>: 
-    <span title={milestone.value}>{milestone.label}</span> - 
-    <a target="_blank" rel="noreferrer" href={"https://www.wolframalpha.com/input/?i="+encodeURIComponent(props.state.refDate.toISOString().split('T')[0]+" + "+milestone.label)}>Verify</a></li>);
+    <span title={milestone.date}>{milestone.date.toISOString().split('T')[0]}</span>: <span title={milestone.value}>{milestone.label}</span> - <a target="_blank" rel="noreferrer" href={"https://www.wolframalpha.com/input/?i="+encodeURIComponent(props.state.refDate.toISOString().split('T')[0]+" + "+milestone.label)}>Verify</a></li>);
   return <ul>{list}</ul>;
 }
 
@@ -134,7 +132,7 @@ function computeMilestones(state) {
   for (const unit of units)
     for (const g of Generators)
       if (state[g.name]) {
-        let future = Generator.filter((item) => refTime + item.value * unit.ms > now - 1000*60*60*24*31, g.gf);
+        let future = Generator.filter((item) => refTime + item.value * unit.ms > now - 1000*60*60*24*365, g.gf);
         let nearFuture = Generator.takeWhile(
           (item) => refTime + item.value * unit.ms < now + 1000*60*60*24*365*10,
           future()
