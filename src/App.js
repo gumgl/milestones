@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import {Generator, Sequences} from './Sequences';
 
 import Container from '@material-ui/core/Container';
+import Box from '@material-ui/core/Box';
 
 import InputLabel from '@material-ui/core/InputLabel';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -12,6 +13,9 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
+
+import Typography from '@material-ui/core/Typography';
+import Link from '@material-ui/core/Link';
 
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
@@ -85,7 +89,9 @@ export default function App() {
 
         <MilestonesList refDate={refDate} seqOptions={seqOptions} />
       </div>
-      <a href="https://github.com/gumgl/milestones">Source</a>
+      <Box mt={8}>
+        <Copyright />
+      </Box>
     </Container>
   );
 }
@@ -230,4 +236,14 @@ function computeMilestones(refDate, seqOptions) {
   milestones.sort((a,b) => a.date - b.date);
 
   return milestones;
+}
+
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      <Link color="inherit" href="https://github.com/gumgl/milestones">
+        Source
+      </Link>{' '}
+    </Typography>
+  );
 }
