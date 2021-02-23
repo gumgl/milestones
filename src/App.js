@@ -6,14 +6,9 @@ import { Button } from '@material-ui/core';
 function App() {
   const [refDate, setRefDate] = useState(new Date(1969, 6, 24));
 
-  const [seqOptions, setSeqOptions] = useState({
-    powers10: true,
-    n10x: false,
-    repdigit: false,
-    powers2: false,
-    factorial: false,
-    lookandsay: false
-  });
+  const [seqOptions, setSeqOptions] = useState(
+    Object.fromEntries(Object.values(Sequences).map(s => [s.id, false]))
+  );
 
   const seqInputChange = (event) => {
     const target = event.target;
@@ -39,7 +34,7 @@ function App() {
     <div className="App">
       <form>
       <label>
-        Date of reference: <br/>
+        Your date of birth: <br/>
         <input
           name="refDate"
           type="date"
