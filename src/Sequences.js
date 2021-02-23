@@ -32,7 +32,7 @@ export const Generator =
 export const Sequences = [
   {
     id: "powers10",
-    name: "10^x",
+    name: "10^n",
     oeis: "A011557",
     gf: function*() {
       for (let n = 1; ; n++)
@@ -58,7 +58,7 @@ export const Sequences = [
   },
   {
     id: "repdigit",
-    name: "[n]^x (repeated digits)",
+    name: "[a]^n (repeated digits)",
     oeis: "A010785",
     gf: function*() {
       for (let b=1; ; b=b*10+1)
@@ -72,7 +72,7 @@ export const Sequences = [
   },
   {
     id:"n10x",
-    name: "n * 10^x (for small n)",
+    name: "a * 10^n (for small a)",
     oeis: "A037124",
     gf: function*() {
       for (let x=1; ; x++)
@@ -86,7 +86,7 @@ export const Sequences = [
   },
   {
     id: "factorial",
-    name: "x! (factorial)",
+    name: "n! (factorial)",
     oeis: "A005150",
     gf: function*() {
       for (let n = 1, m = 1; ; n++, m *= n)
