@@ -58,7 +58,7 @@ export const Sequences = [
   },
   {
     id: "repdigit",
-    name: "[n]^x (repeated digit)",
+    name: "[n]^x (repeated digits)",
     oeis: "A010785",
     gf: function*() {
       for (let b=1; ; b=b*10+1)
@@ -118,11 +118,20 @@ export const Sequences = [
         return result;
       };
       for (let term = "1"; ; term = nextTerm(term))
-        yield {
-          params: [term],
-          value: term
-        };
+        yield {value: term, params: []};
     },
     format: (item) => item.value,
+  },
+  {
+    id: "fib",
+    name: "Fibonacci numbers",
+    oeis: "A000045",
+    gf: function*() {
+      yield {value: 0, params: []};
+      yield {value: 1, params: []};
+      for (let a = 0, b = 1; ; b = a + b, a = b - a)
+        yield {value: a+b, params: []};
+    },
+    format: (item) => item.value.toLocaleString(),
   },
 ];
