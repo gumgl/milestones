@@ -157,9 +157,7 @@ function SequenceOption(props) {
           //inputProps={{ 'aria-labelledby': labelId }}
         />
       </ListItemIcon>
-      <Tooltip title={s.explanation} placement="bottom">
-        <ListItemText /*id={labelId}*/ primary={s.name} />
-      </Tooltip>
+      <ListItemText /*id={labelId}*/ primary={s.name} />
       <ListItemSecondaryAction>
         <Tooltip title={s.oeis} placement="right">
           <IconButton edge="end" aria-label="info"
@@ -188,7 +186,9 @@ function Milestone(props) {
       <ListItemIcon>
         <EventIcon />
       </ListItemIcon>
-      <ListItemText primary={milestone.label} secondary={milestone.date.toDateString()} />
+      <Tooltip title={milestone.explanation} placement="bottom">
+        <ListItemText primary={milestone.label} secondary={milestone.date.toDateString()} />
+      </Tooltip>
       <ListItemSecondaryAction>
         <Tooltip title="See on Wolfram|Alpha" placement="right">
           <IconButton edge="end" aria-label="info"
