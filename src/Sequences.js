@@ -134,4 +134,24 @@ export const Sequences = [
     },
     format: (item) => item.value.toLocaleString(),
   },
+  {
+    id: "1ton",
+    name: "[1..n] for n-digit numbers",
+    oeis: "A007908",
+    gf: function*() {
+      for (let n = 1, term="1"; ; n++, term += n)
+        yield {value: Number(term), params: []};
+    },
+    format: (item) => item.value.toLocaleString(),
+  },
+  {
+    id: "nto1",
+    name: "[n..1] for n-digit numbers",
+    oeis: "A000422",
+    gf: function*() {
+      for (let n = 1, term="1"; ; n++, term = n + term)
+        yield {value: Number(term), params: []};
+    },
+    format: (item) => item.value.toLocaleString(),
+  },
 ];
