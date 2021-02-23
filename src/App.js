@@ -1,12 +1,12 @@
 import './App.css';
 import React, {useState} from 'react';
-import {Generator, Generators} from './Generators';
+import {Generator, Sequences} from './Sequences';
 import { Button } from '@material-ui/core';
 
 function App() {
   const [refDate, setRefDate] = useState(new Date(1969, 6, 24));
 
-  const [genOptions, setGenOptions] = useState({
+  const [seqOptions, setSeqOptions] = useState({
     powers10: true,
     n10x: false,
     repdigit: false,
@@ -15,19 +15,18 @@ function App() {
     lookandsay: false
   });
 
-  const handleGenInputChange = (event) => {
+  const seqInputChange = (event) => {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked :
                   target.value;
-    const name = target.name;
 
-    setGenOptions({
-      ...genOptions,
-      [name]: value
+    setSeqOptions({
+      ...seqOptions,
+      [target.name]: value
     });
   };
 
-  const handleDateInputChange = (e) => {
+  const refDateInputChange = (e) => {
     const d = new Date(e.target.value);
 
     if (!isNaN(d))
@@ -45,28 +44,28 @@ function App() {
           name="refDate"
           type="date"
           value={refDate.toISOString().split('T')[0]}
-          onChange={handleDateInputChange} />
+          onChange={refDateInputChange} />
       </label>
       <SequenceOptionsList
-        genOptions={genOptions}
-        handleGenInputChange={handleGenInputChange}
+        seqOptions={seqOptions}
+        seqInputChange={seqInputChange}
         />
     </form>
     <p>Since {refDate.toDateString()}...</p>
 
-    <MilestonesList refDate={refDate} genOptions={genOptions} />
+    <MilestonesList refDate={refDate} seqOptions={seqOptions} />
     
     </div>
   );
 }
 
 function SequenceOptionsList(props) {
-  let list = Generators.map(g => 
-    <li key={g.id}>
+  let list = Sequences.map(s => 
+    <li key={s.id}>
       <SequenceOption
-        generator={g}
-        genOptions={props.genOptions}
-        handleGenInputChange={props.handleGenInputChange}
+        sequence={s}
+        seqOptions={props.seqOptions}
+        seqInputChange={props.seqInputChange}
         />
     </li>);
 
@@ -79,27 +78,27 @@ function SequenceOptionsList(props) {
 }
 
 function SequenceOption(props) {
-  const g = props.generator;
+  const s = props.sequence;
   return (
     <label>
       <input
-        name={g.id}
+        name={s.id}
         type="checkbox"
-        checked={props.genOptions[g.id]}
-        onChange={props.handleGenInputChange} />
-      {g.name} <a href={"https://oeis.org/" + g.oeis} target="_blank" rel="noreferrer">{g.oeis}</a>
+        checked={props.seqOptions[s.id]}
+        onChange={props.seqInputChange} />
+      {s.name} <a href={"https://oeis.org/" + s.oeis} target="_blank" rel="noreferrer">{s.oeis}</a>
     </label>
   );
 }
 
 function MilestonesList(props) {
-  let list = computeMilestones(props.refDate, props.genOptions).map((milestone) =>
+  let list = computeMilestones(props.refDate, props.seqOptions).map((milestone) =>
     <li key={milestone.date.getTime()+"-"+milestone.value}>
     <span title={milestone.date}>{milestone.date.toISOString().split('T')[0]}</span>: <span title={milestone.value}>{milestone.label}</span> - <a target="_blank" rel="noreferrer" href={"https://www.wolframalpha.com/input/?i="+encodeURIComponent(props.refDate.toISOString().split('T')[0]+" + "+milestone.label)}>Verify</a></li>);
   return <ul>{list}</ul>;
 }
 
-function computeMilestones(refDate, genOptions) {
+function computeMilestones(refDate, seqOptions) {
   const units = [
     {ms: 1000, name: "seconds"},
     {ms: 1000*60, name: "minutes"},
@@ -114,16 +113,16 @@ function computeMilestones(refDate, genOptions) {
       now = Date.now();
 
   for (const unit of units)
-    for (const g of Generators)
-      if (genOptions[g.id]) {
-        let future = Generator.filter((item) => refTime + item.value * unit.ms > now - 1000*60*60*24*365, g.gf);
+    for (const s of Sequences)
+      if (seqOptions[s.id]) {
+        let future = Generator.filter((item) => refTime + item.value * unit.ms > now - 1000*60*60*24*365, s.gf);
         let nearFuture = Generator.takeWhile(
           (item) => refTime + item.value * unit.ms < now + 1000*60*60*24*365*10,
           future()
           );
         let tagged = nearFuture.map((item) => ({
           date: new Date(refTime + item.value * unit.ms),
-          label: g.format(item) + " " + unit.name,
+          label: s.format(item) + " " + unit.name,
           value: item.value
         }));
         milestones = milestones.concat(tagged);
