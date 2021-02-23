@@ -105,14 +105,14 @@ export const Sequences = [
       let nextTerm = (term) => {
         let result = "";
         for (let i=0, c=0, prev; i < term.length; i++) {
-          if (c == 0 || term[i] != prev ) {
-            if (c != 0)
+          if (c === 0 || term[i] !== prev ) {
+            if (c !== 0)
               result += "" + c + prev;
             prev = term[i];
             c = 1;
           } else
             c++;
-          if (i == term.length - 1)
+          if (i === term.length - 1)
             result += "" + c + prev;
         }
         return result;
