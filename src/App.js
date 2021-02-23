@@ -14,6 +14,7 @@ class App extends React.Component {
       repdigit: false,
       powers2: false,
       factorial: false,
+      lookandsay: false
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -94,6 +95,16 @@ class App extends React.Component {
                 checked={this.state.factorial}
                 onChange={this.handleInputChange} />
               x! (factorial)
+            </label>
+          </li>
+          <li>
+            <label>
+              <input
+                name="lookandsay"
+                type="checkbox"
+                checked={this.state.lookandsay}
+                onChange={this.handleInputChange} />
+              Look-and-say terms (<a href="https://oeis.org/A005150" target="_blank" rel="noreferrer">A005150</a>)
             </label>
           </li>
         </ul>

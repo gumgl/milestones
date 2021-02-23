@@ -92,4 +92,31 @@ export const Generators = [
     format: (item) => item.params[0] + "!",
     oeis: "A005150"
   },
+  {
+    name:"lookandsay",
+    gf: function*() {
+      let nextTerm = (term) => {
+        let result = "";
+        for (let i=0, c=0, prev; i < term.length; i++) {
+          if (c == 0 || term[i] != prev ) {
+            if (c != 0)
+              result += "" + c + prev;
+            prev = term[i];
+            c = 1;
+          } else
+            c++;
+          if (i == term.length - 1)
+            result += "" + c + prev;
+        }
+        return result;
+      };
+      for (let term = "1"; ; term = nextTerm(term))
+        yield {
+          params: [term],
+          value: term
+        };
+    },
+    format: (item) => item.value,
+    oeis: "A005150"
+  },
 ];
