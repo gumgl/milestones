@@ -1,3 +1,5 @@
+# How to contribute
+
 ### `yarn install`
 
 To download all the dependencies from a fresh clone/checkout.
@@ -8,11 +10,11 @@ Runs the app in the development mode at [http://localhost:3000](http://localhost
 
 ### `yarn build`
 
-To build the app for production to the `build` folder. and go serve them as you please.
+To build the app for production to the `build` folder and go serve them as you please.
 
 ### `yarn run deploy`
 
-To publish to [GitHub Pages](https://github.com/gumgl/milestones). (Yes, it builds and commits into the `gh-pages` branch!)
+To publish to [GitHub Pages](https://github.com/gumgl/milestones). (Yes, it [builds and commits](https://create-react-app.dev/docs/deployment/#github-pages) into the `gh-pages` branch!)
 
 
 ### `yarn test`
@@ -22,4 +24,4 @@ Launches the test runner in the interactive watch mode.\
 
 ### Misc
 
-https://en.wikipedia.org/wiki/List_of_integer_sequences
+- https://en.wikipedia.org/wiki/List_of_integer_sequences
