@@ -223,13 +223,13 @@ function computeMilestones(refDate, seqOptions) {
   for (const unit of units)
     for (const s of Sequences)
       if (seqOptions[s.id]) {
-        let future = Generator.filter(
-          dateFilter(refDate, unit, {months:-1}, false),
-          s.gf);
-        let nearFuture = Generator.takeWhile(
+        let upperBounded = Generator.takeWhile(
           dateFilter(refDate, unit, {years: 10}, true),
-          future()
-          );
+          s.gf());
+        
+        let nearFuture = upperBounded.filter(
+          dateFilter(refDate, unit, {months:-1}, false));
+
         let tagged = nearFuture.map((item) => ({
           date: DateFns.add(refDate, {[unit]:item.value}),
           label: s.display(item) + " " + unit,
