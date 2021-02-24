@@ -209,19 +209,25 @@ function Milestone(props) {
 
 function computeMilestones(refDate, seqOptions) {
   const units = ["seconds", "minutes", "hours", "days", "weeks", "months"];
+  let milestones = [];
 
-  let milestones = [],
-      refTime = refDate.getTime(),
-      now = Date.now();
+  // Poor man's currying
+  const dateFilter = (date, unit, offSetFromNow, isUpperBound) => (item) => {
+    const candidate = DateFns.add(date, {[unit]:item.value});
+    const limit = DateFns.add(new Date(), offSetFromNow)
+
+    return !isNaN(candidate) && 
+      (candidate > limit ^ isUpperBound);
+  };
 
   for (const unit of units)
     for (const s of Sequences)
       if (seqOptions[s.id]) {
         let future = Generator.filter(
-          (item) => DateFns.add(refDate, {[unit]:item.value}) > DateFns.sub(now, {years:1}),
+          dateFilter(refDate, unit, {months:-1}, false),
           s.gf);
         let nearFuture = Generator.takeWhile(
-          (item) => DateFns.add(refDate, {[unit]:item.value}) < DateFns.add(now, {years:10}),
+          dateFilter(refDate, unit, {years: 10}, true),
           future()
           );
         let tagged = nearFuture.map((item) => ({
