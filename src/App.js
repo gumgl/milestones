@@ -3,6 +3,11 @@ import React, {useState} from 'react';
 import {Generator, Sequences} from './Sequences';
 
 import * as DateFns from 'date-fns'
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  DateTimePicker,
+  MuiPickersUtilsProvider,
+} from '@material-ui/pickers';
 
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
@@ -52,31 +57,26 @@ export default function App() {
     });
   };
 
-  const refDateInputChange = (e) => {
-    const d = new Date(e.target.value);
-
-    if (!isNaN(d))
-      setRefDate(d);
-    else
-      console.error("Incorrect date input: ", e.target.value);
-  };
-
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
         <FormControl component="fieldset" className={classes.formControl}>
           <FormGroup>
-          <TextField
-            label="Your date of birth"
-            type="date"
-            value={refDate.toISOString().split('T')[0]}
-            className={classes.textField}
-            onChange={refDateInputChange}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            />
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <DateTimePicker
+              value={refDate}
+              onChange={setRefDate}
+              format="MMM d, y HH:mm"
+              disableFuture
+              hideTabs
+              minutesStep={5}
+              ampm={false}
+              minDate={new Date(1910 ,1, 1)}
+              openTo="year"
+              label="Date and time of birth"
+              />
+            </MuiPickersUtilsProvider>
 
           </FormGroup>
           <FormGroup>
@@ -142,7 +142,6 @@ function SequenceOptionsList(props) {
 
 function SequenceOption(props) {
   const s = props.sequence;
-  const labelId = `checkbox-list-label-${s.id}`;
   
   return (
     <ListItem key={s.id}
@@ -156,10 +155,9 @@ function SequenceOption(props) {
           edge="start"
           tabIndex={-1}
           disableRipple
-          //inputProps={{ 'aria-labelledby': labelId }}
         />
       </ListItemIcon>
-      <ListItemText /*id={labelId}*/ primary={s.name} />
+      <ListItemText primary={s.name} />
       <ListItemSecondaryAction>
         <Tooltip title={s.oeis} placement="right">
           <IconButton edge="end" aria-label="info"
@@ -192,7 +190,9 @@ function Milestone(props) {
         <EventIcon />
       </ListItemIcon>
       <Tooltip title={milestone.explanation} placement="bottom">
-        <ListItemText primary={milestone.label} secondary={milestone.date.toDateString()} />
+        <ListItemText
+          primary={milestone.label}
+          secondary={DateFns.format(milestone.date, "MMM d, y HH:mm")} />
       </Tooltip>
       <ListItemSecondaryAction>
         <Tooltip title="See on Wolfram|Alpha" placement="right">
