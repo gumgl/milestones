@@ -2,7 +2,7 @@
 import React, {useState} from 'react';
 import {Generator, Sequences} from './Sequences';
 
-import { formatDistance, subDays } from 'date-fns'
+import * as DateFns from 'date-fns'
 
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
@@ -176,7 +176,10 @@ function SequenceOption(props) {
 function MilestonesList(props) {
   return (<List>
   {computeMilestones(props.refDate, props.seqOptions).map((milestone) =>
-    <Milestone refDate={props.refDate} milestone={milestone} />)
+    <Milestone
+      key={milestone.date.getTime()+"-"+milestone.value}
+      refDate={props.refDate}
+      milestone={milestone} />)
   }</List>);
 }
 
@@ -184,7 +187,7 @@ function Milestone(props) {
   const milestone = props.milestone;
 
   return (
-    <ListItem key={milestone.date.getTime()+"-"+milestone.value}>
+    <ListItem>
       <ListItemIcon>
         <EventIcon />
       </ListItemIcon>
@@ -205,14 +208,7 @@ function Milestone(props) {
 }
 
 function computeMilestones(refDate, seqOptions) {
-  const units = [
-    {ms: 1000, name: "seconds"},
-    {ms: 1000*60, name: "minutes"},
-    {ms: 1000*60*60, name: "hours"},
-    {ms: 1000*60*60*24, name: "days"},
-    {ms: 1000*60*60*24*7, name: "weeks"},
-    // months TBD
-  ];
+  const units = ["seconds", "minutes", "hours", "days", "weeks", "months"];
 
   let milestones = [],
       refTime = refDate.getTime(),
@@ -221,14 +217,16 @@ function computeMilestones(refDate, seqOptions) {
   for (const unit of units)
     for (const s of Sequences)
       if (seqOptions[s.id]) {
-        let future = Generator.filter((item) => refTime + item.value * unit.ms > now - 1000*60*60*24*365, s.gf);
+        let future = Generator.filter(
+          (item) => DateFns.add(refDate, {[unit]:item.value}) > DateFns.sub(now, {years:1}),
+          s.gf);
         let nearFuture = Generator.takeWhile(
-          (item) => refTime + item.value * unit.ms < now + 1000*60*60*24*365*10,
+          (item) => DateFns.add(refDate, {[unit]:item.value}) < DateFns.add(now, {years:10}),
           future()
           );
         let tagged = nearFuture.map((item) => ({
-          date: new Date(refTime + item.value * unit.ms),
-          label: s.display(item) + " " + unit.name,
+          date: DateFns.add(refDate, {[unit]:item.value}),
+          label: s.display(item) + " " + unit,
           explanation: s.explain(item),
           value: item.value
         }));
