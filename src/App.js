@@ -5,7 +5,8 @@ import {Generator, Sequences} from './Sequences';
 import * as DateFns from 'date-fns'
 import DateFnsUtils from '@date-io/date-fns';
 import {
-  DateTimePicker,
+  DatePicker,
+  TimePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 
@@ -73,21 +74,29 @@ export default function App() {
         <FormControl component="fieldset" className={classes.formControl}>
           <FormGroup>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <DateTimePicker
+              <DatePicker
               value={refDate}
               onChange={setRefDate}
-              format="MMM d, y HH:mm"
+              format="MMM d, y"
               disableFuture
               hideTabs
-              minutesStep={5}
+              //minutesStep={5}
               ampm={false}
               minDate={new Date(1910 ,1, 1)}
               openTo="year"
-              label="Date and time of birth"
+              label="Date of birth"
               />
-            </MuiPickersUtilsProvider>
             <p>TZ:[{timeZone?.name ?? "Null"}]</p>
             <TimeSelector timeZones={timeZones} value={timeZone} setValue={setTimeZone} />
+            <TimePicker
+              value={refDate}
+              onChange={setRefDate}
+              format="HH:mm"
+              minutesStep={5}
+              ampm={false}
+              label="Time of birth"
+              />
+            </MuiPickersUtilsProvider>
           </FormGroup>
           <FormGroup>
             <FormLabel>What do you care about?</FormLabel>
@@ -148,7 +157,7 @@ function TimeSelector(props) {
       getOptionLabel={(option) => option.name}
       filterOptions={filterOptions}
       style={{ width: 300 }}
-      renderInput={(params) => <TextField {...params} label="Time Zone" variant="outlined" />}
+      renderInput={(params) => <TextField {...params} label="Time Zone (search by city)" variant="outlined" />}
     />);
 }
 
