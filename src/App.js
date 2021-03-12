@@ -9,6 +9,8 @@ import {
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 
+import { getTimeZones, rawTimeZones, timeZonesNames } from "@vvo/tzdb";
+
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 
@@ -20,6 +22,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
@@ -57,6 +60,8 @@ export default function App() {
     });
   };
 
+  const timeZones = getTimeZones();
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -77,7 +82,7 @@ export default function App() {
               label="Date and time of birth"
               />
             </MuiPickersUtilsProvider>
-
+            <TimeSelector timeZones={timeZones} />
           </FormGroup>
           <FormGroup>
             <FormLabel>What do you care about?</FormLabel>
@@ -125,6 +130,17 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
   },
 }));
+
+function TimeSelector(props) {
+  return (<Autocomplete
+      id="timezone"
+      options={props.timeZones}
+      getOptionLabel={(option) => option.rawFormat}
+      //filterOptions={filterOptions}
+      style={{ width: 300 }}
+      renderInput={(params) => <TextField {...params} label="Time Zone" variant="outlined" />}
+    />);
+}
 
 function SequenceOptionsList(props) {
   let list = Sequences.map(s =>
