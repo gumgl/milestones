@@ -9,7 +9,7 @@ import {
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 
-import { getTimeZones, rawTimeZones, timeZonesNames } from "@vvo/tzdb";
+import { getTimeZones } from "@vvo/tzdb";
 
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
@@ -22,7 +22,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
@@ -42,11 +42,17 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { makeStyles } from '@material-ui/core/styles';
 
+const timeZones = getTimeZones();
+
 export default function App() {
   const classes = useStyles();
 
   const [refDate, setRefDate] = useState(new Date(1969, 6, 24));
 
+  const [timeZone, setTimeZone] = useState(
+    timeZones.find(zone => zone.name === Intl.DateTimeFormat().resolvedOptions().timeZone)
+  );
+  
   const [seqOptions, setSeqOptions] = useState(
     Object.fromEntries(Object.values(Sequences).map(s => [s.id, false]))
   );
@@ -59,8 +65,6 @@ export default function App() {
       [id]: value
     });
   };
-
-  const timeZones = getTimeZones();
 
   return (
     <Container component="main" maxWidth="xs">
@@ -82,7 +86,8 @@ export default function App() {
               label="Date and time of birth"
               />
             </MuiPickersUtilsProvider>
-            <TimeSelector timeZones={timeZones} />
+            <p>TZ:[{timeZone?.name ?? "Null"}]</p>
+            <TimeSelector timeZones={timeZones} value={timeZone} setValue={setTimeZone} />
           </FormGroup>
           <FormGroup>
             <FormLabel>What do you care about?</FormLabel>
@@ -132,11 +137,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function TimeSelector(props) {
+  const filterOptions = createFilterOptions({
+    stringify: option => option.rawFormat,
+  });
   return (<Autocomplete
       id="timezone"
+      value={props.value}
+      onChange={(event, newValue) => {props.setValue(newValue);}}
       options={props.timeZones}
-      getOptionLabel={(option) => option.rawFormat}
-      //filterOptions={filterOptions}
+      getOptionLabel={(option) => option.name}
+      filterOptions={filterOptions}
       style={{ width: 300 }}
       renderInput={(params) => <TextField {...params} label="Time Zone" variant="outlined" />}
     />);
