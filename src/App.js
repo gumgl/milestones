@@ -2,13 +2,14 @@
 import React, {useState} from 'react';
 import {Generator, Sequences} from './Sequences';
 
-import * as DateFns from 'date-fns'
-import DateFnsUtils from '@date-io/date-fns';
 import {
   DatePicker,
   TimePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
+
+import { DateTime } from "luxon";
+import LuxonUtils from '@date-io/luxon';
 
 import { getTimeZones } from "@vvo/tzdb";
 
@@ -44,14 +45,16 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { makeStyles } from '@material-ui/core/styles';
 
 const timeZones = getTimeZones();
+const localTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 export default function App() {
   const classes = useStyles();
 
-  const [refDate, setRefDate] = useState(new Date(1969, 6, 24));
+  const [refDate, setRefDate] = useState(DateTime.local(1969, 6, 24));
+  //const [refDateTZ, setRefDateTZ] = useState(refDate);
 
-  const [timeZone, setTimeZone] = useState(
-    timeZones.find(zone => zone.name === Intl.DateTimeFormat().resolvedOptions().timeZone)
+  const [refTimeZone, setRefTimeZone] = useState(
+    timeZones.find(zone => zone.name === localTimeZone)
   );
   
   const [seqOptions, setSeqOptions] = useState(
@@ -67,35 +70,46 @@ export default function App() {
     });
   };
 
+  const onRefDateChange = (value) => {
+    setRefDate(value.setZone(refTimeZone.name, {keepLocalTime: true}));
+  }
+
+  const onRefTimeZoneChange = (event, value) => {
+    if (value != null) {
+      setRefTimeZone(value);
+      setRefDate(refDate.setZone(value.name, {keepLocalTime: true}));
+    }
+  }
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
+        <p>RefDate:{refDate.toString()} [{refTimeZone?.name ?? "Null"}]</p>
         <FormControl component="fieldset" className={classes.formControl}>
           <FormGroup>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <MuiPickersUtilsProvider utils={LuxonUtils}>
               <DatePicker
-              value={refDate}
-              onChange={setRefDate}
-              format="MMM d, y"
-              disableFuture
-              hideTabs
-              //minutesStep={5}
-              ampm={false}
-              minDate={new Date(1910 ,1, 1)}
-              openTo="year"
-              label="Date of birth"
+                value={refDate}
+                onChange={onRefDateChange}
+                format="MMM d, y"
+                disableFuture
+                hideTabs
+                autoOk={true}
+                minDate={new Date(1910 ,1, 1)}
+                openTo="year"
+                label="Date of birth"
               />
-            <p>TZ:[{timeZone?.name ?? "Null"}]</p>
-            <TimeSelector timeZones={timeZones} value={timeZone} setValue={setTimeZone} />
-            <TimePicker
-              value={refDate}
-              onChange={setRefDate}
-              format="HH:mm"
-              minutesStep={5}
-              ampm={false}
-              label="Time of birth"
-              />
+              <TimeZonePicker timeZones={timeZones} value={refTimeZone} onChange={onRefTimeZoneChange} />
+              <TimePicker
+                value={refDate}
+                onChange={onRefDateChange}
+                format="HH:mm"
+                minutesStep={5}
+                ampm={false}
+                autoOk={true}
+                label="Time of birth"
+                />
             </MuiPickersUtilsProvider>
           </FormGroup>
           <FormGroup>
@@ -108,7 +122,7 @@ export default function App() {
           </FormGroup>
         </FormControl>
 
-        <MilestonesList refDate={refDate} seqOptions={seqOptions} />
+        <MilestonesList refDate={refDate} refTZ={refTimeZone} seqOptions={seqOptions} />
       </div>
       <Box mt={8}>
         <Copyright />
@@ -145,19 +159,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function TimeSelector(props) {
+function TimeZonePicker(props) {
   const filterOptions = createFilterOptions({
     stringify: option => option.rawFormat,
   });
   return (<Autocomplete
       id="timezone"
       value={props.value}
-      onChange={(event, newValue) => {props.setValue(newValue);}}
+      onChange={props.onChange}
       options={props.timeZones}
       getOptionLabel={(option) => option.name}
       filterOptions={filterOptions}
       style={{ width: 300 }}
-      renderInput={(params) => <TextField {...params} label="Time Zone (search by city)" variant="outlined" />}
+      noOptionsText="Try typing a larger city"
+      renderInput={(params) => <TextField {...params} label="Birth Time Zone (search by city)"          variant="outlined" />}
     />);
 }
 
@@ -210,7 +225,7 @@ function MilestonesList(props) {
   return (<List>
   {computeMilestones(props.refDate, props.seqOptions).map((milestone) =>
     <Milestone
-      key={milestone.date.getTime()+"-"+milestone.value}
+      key={milestone.date.toMillis()+"-"+milestone.value}
       refDate={props.refDate}
       milestone={milestone} />)
   }</List>);
@@ -227,12 +242,20 @@ function Milestone(props) {
       <Tooltip title={milestone.explanation} placement="bottom">
         <ListItemText
           primary={milestone.label}
-          secondary={DateFns.format(milestone.date, "MMM d, y HH:mm")} />
+          secondary={milestone.date.setZone(localTimeZone).toLocaleString({
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: false,
+            timeZoneName: 'short'
+          })} />
       </Tooltip>
       <ListItemSecondaryAction>
         <Tooltip title="See on Wolfram|Alpha" placement="right">
           <IconButton edge="end" aria-label="info"
-            href={`https://www.wolframalpha.com/input/?i=${encodeURIComponent(props.refDate.toISOString().split('T')[0]+" + "+milestone.label)}`}
+            href={`https://www.wolframalpha.com/input/?i=${encodeURIComponent(props.refDate.toString().split('T')[0]+" + "+milestone.label)}`}
             target="_blank">
             <FunctionsIcon />
           </IconButton>
@@ -248,10 +271,10 @@ function computeMilestones(refDate, seqOptions) {
 
   // Poor man's currying
   const dateFilter = (date, unit, offSetFromNow, isUpperBound) => (item) => {
-    const candidate = DateFns.add(date, {[unit]:item.value});
-    const limit = DateFns.add(new Date(), offSetFromNow)
+    const candidate = date.plus({[unit]:item.value});
+    const limit = DateTime.local().plus(offSetFromNow);
 
-    return !isNaN(candidate) && 
+    return !isNaN(candidate) &&
       (candidate > limit ^ isUpperBound);
   };
 
@@ -266,7 +289,7 @@ function computeMilestones(refDate, seqOptions) {
           dateFilter(refDate, unit, {months:-1}, false));
 
         let tagged = nearFuture.map((item) => ({
-          date: DateFns.add(refDate, {[unit]:item.value}),
+          date: refDate.plus({[unit]:item.value}),
           label: s.display(item) + " " + unit,
           explanation: s.explain(item),
           value: item.value
@@ -274,7 +297,7 @@ function computeMilestones(refDate, seqOptions) {
         milestones = milestones.concat(tagged);
       }
 
-  milestones.sort((a,b) => a.date - b.date);
+  milestones.sort((a,b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
 
   return milestones;
 }
