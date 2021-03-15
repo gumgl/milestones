@@ -26,6 +26,11 @@ import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 
@@ -56,6 +61,8 @@ export default function App() {
   const [refTimeZone, setRefTimeZone] = useState(
     timeZones.find(zone => zone.name === localTimeZone)
   );
+
+  const [useTimePrecision, setUseTimePrecision] = useState(false);
   
   const [seqOptions, setSeqOptions] = useState(
     Object.fromEntries(Object.values(Sequences).map(s => [s.id, false]))
@@ -100,16 +107,24 @@ export default function App() {
                 openTo="year"
                 label="Date of birth"
               />
-              <TimeZonePicker timeZones={timeZones} value={refTimeZone} onChange={onRefTimeZoneChange} />
-              <TimePicker
-                value={refDate}
-                onChange={onRefDateChange}
-                format="HH:mm"
-                minutesStep={5}
-                ampm={false}
-                autoOk={true}
-                label="Time of birth"
-                />
+              <Accordion expanded={useTimePrecision} onChange={e => setUseTimePrecision(!useTimePrecision)}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography className={classes.heading}>Time-of-day precision</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <TimeZonePicker timeZones={timeZones} value={refTimeZone} onChange={onRefTimeZoneChange} />
+                  <TimePicker
+                    value={refDate}
+                    onChange={onRefDateChange}
+                    format="HH:mm"
+                    minutesStep={5}
+                    ampm={false}
+                    autoOk={true}
+                    label="Time of birth"
+                    />
+                </AccordionDetails>
+              </Accordion>
+              
             </MuiPickersUtilsProvider>
           </FormGroup>
           <FormGroup>
@@ -122,7 +137,7 @@ export default function App() {
           </FormGroup>
         </FormControl>
 
-        <MilestonesList refDate={refDate} refTZ={refTimeZone} seqOptions={seqOptions} />
+        <MilestonesList refDate={refDate} useTimePrecision={useTimePrecision} seqOptions={seqOptions} />
       </div>
       <Box mt={8}>
         <Copyright />
@@ -156,6 +171,10 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     maxWidth: 560,
     backgroundColor: theme.palette.background.paper,
+  },
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    flexShrink: 0,
   },
 }));
 
@@ -227,6 +246,7 @@ function MilestonesList(props) {
     <Milestone
       key={milestone.date.toMillis()+"-"+milestone.value}
       refDate={props.refDate}
+      useTimePrecision={props.useTimePrecision}
       milestone={milestone} />)
   }</List>);
 }
@@ -242,7 +262,8 @@ function Milestone(props) {
       <Tooltip title={milestone.explanation} placement="bottom">
         <ListItemText
           primary={milestone.label}
-          secondary={milestone.date.setZone(localTimeZone).toLocaleString({
+          secondary={milestone.date.setZone(localTimeZone).toLocaleString(
+            props.useTimePrecision ? {
             year: 'numeric',
             month: 'short',
             day: 'numeric',
@@ -250,7 +271,8 @@ function Milestone(props) {
             minute: '2-digit',
             hour12: false,
             timeZoneName: 'short'
-          })} />
+          } :
+          DateTime.DATE_MED)} />
       </Tooltip>
       <ListItemSecondaryAction>
         <Tooltip title="See on Wolfram|Alpha" placement="right">
