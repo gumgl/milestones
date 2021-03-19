@@ -31,6 +31,22 @@ export function DateTimeSelector(props) {
       props.setRefDate(date.setZone(refTimeZone.name, { keepLocalTime: true }));
   }
 
+  const onRefTimeChange = (time, value) => {
+    /* This is a bug where typing in a time in KeyboardTimePicker somehow disregards .value
+     attribute's date part and sets the time on today. This does not happen using the graphical picker.
+     Fix: We take extract the time and set it on {props.refDate}. */
+
+    if (time != null && time.isValid) {
+      const date = props.refDate.set({
+        hour: time.get("hour"),
+        minute: time.get("minute"),
+        second: time.get("second")
+      }).setZone(refTimeZone.name, { keepLocalTime: true });
+      
+      props.setRefDate(date);
+    }
+  }
+
   const onRefTimeZoneChange = (event, value) => {
     if (value != null) {
       setRefTimeZone(value);
@@ -52,7 +68,7 @@ export function DateTimeSelector(props) {
           minDate={new Date(1910, 1, 1)}
           maxDate={new Date(2009, 11, 31)}
           openTo="year"
-          label="Date of birth"
+          label="Date of birth"  
           inputVariant="outlined"
           fullWidth
           style={{ backgroundColor: "#FFF" }}
@@ -71,7 +87,7 @@ export function DateTimeSelector(props) {
               <TimeZonePicker value={refTimeZone} onChange={onRefTimeZoneChange} classes={props.classes} />
               <KeyboardTimePicker
                 value={props.refDate}
-                onChange={onRefDateChange}
+                onChange={onRefTimeChange}
                 format="HH:mm"
                 minutesStep={5}
                 autoOk
