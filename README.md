@@ -25,6 +25,3 @@ Launches the test runner in the interactive watch mode.\
 ### Misc
 
 - https://en.wikipedia.org/wiki/List_of_integer_sequences
-
-- Timezones:
-  - https://www.npmjs.com/package/tzdata
