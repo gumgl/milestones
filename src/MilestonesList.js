@@ -67,6 +67,13 @@ export function MilestonesList(props) {
 
 function Milestone(props) {
   const milestone = props.milestone;
+  const localDate = milestone.date.setZone(props.localTimeZone);
+
+  const wolframAlphaURL = "https://www.wolframalpha.com/input/?i=" + encodeURIComponent(
+    props.useTimePrecision ?
+      props.refDate.toFormat("yyyy-LL-dd HH:mm 'UTC'ZZZ") + " + " + milestone.label + " to " + localDate.toFormat("ZZZZZ") :
+      props.refDate.toFormat("yyyy-LL-dd ") + " + " + milestone.label
+  );
 
   return (
     <ListItem>
@@ -76,23 +83,11 @@ function Milestone(props) {
       <Tooltip title={milestone.explanation} placement="bottom">
         <ListItemText
           primary={milestone.label}
-          secondary={(!props.useTimePrecision?"On ":"") + milestone.date.setZone(props.localTimeZone).toLocaleString(
-            props.useTimePrecision ? {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-              hour: 'numeric',
-              minute: '2-digit',
-              hour12: false,
-              timeZoneName: 'short'
-            } :
-              DateTime.DATE_MED)} />
+          secondary={localDate.toFormat(props.useTimePrecision ? "DD 'at' T ZZZZ" : "'On' DD")} />
       </Tooltip>
       <ListItemSecondaryAction>
-        <Tooltip title="See on Wolfram|Alpha" placement="right">
-          <IconButton edge="end" aria-label="info"
-            href={`https://www.wolframalpha.com/input/?i=${encodeURIComponent(props.refDate.toString().split('T')[0] + " + " + milestone.label)}`}
-            target="_blank">
+        <Tooltip title="Verify with Wolfram|Alpha" placement="right">
+          <IconButton edge="end" aria-label="info" href={wolframAlphaURL} target="_blank">
             <FunctionsIcon />
           </IconButton>
         </Tooltip>

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 import LuxonUtils from '@date-io/luxon';
 import { getTimeZones } from "@vvo/tzdb";
-import { DateTime } from "luxon";
 
 import {
   DatePicker,
@@ -24,10 +23,8 @@ import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete
 const timeZones = getTimeZones();
 
 export function DateTimeSelector(props) {
-
   const [refTimeZone, setRefTimeZone] = useState(
-    timeZones.find(zone => zone.name === props.localTimeZone)
-  );
+    timeZones.find(zone => zone.name === props.localTimeZone));
 
   const onRefDateChange = (value) => {
     props.setRefDate(value.setZone(refTimeZone.name, { keepLocalTime: true }));
@@ -47,7 +44,7 @@ export function DateTimeSelector(props) {
         <DatePicker
           value={props.refDate}
           onChange={onRefDateChange}
-          labelFunc={new Intl.DateTimeFormat('default', DateTime.DATE_MED_WITH_WEEKDAY).format}
+          format="DD"
           disableFuture
           hideTabs
           autoOk={true}
@@ -56,10 +53,10 @@ export function DateTimeSelector(props) {
           label="Date of birth"
           inputVariant="outlined"
           fullWidth
-          style={{backgroundColor:"#FFF"}}
+          style={{ backgroundColor: "#FFF" }}
           className={props.classes.input}
         />
-        <Accordion 
+        <Accordion
           expanded={props.useTimePrecision}
           onChange={e => props.setUseTimePrecision(!props.useTimePrecision)}
           variant="outlined"
@@ -68,8 +65,8 @@ export function DateTimeSelector(props) {
             <Typography className={props.classes.heading}>Time-of-day precision</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Box style={{width:"100%"}}>
-              <TimeZonePicker timeZones={timeZones} value={refTimeZone} onChange={onRefTimeZoneChange} classes={props.classes} />
+            <Box style={{ width: "100%" }}>
+              <TimeZonePicker value={refTimeZone} onChange={onRefTimeZoneChange} classes={props.classes} />
               <TimePicker
                 value={props.refDate}
                 onChange={onRefDateChange}
@@ -98,7 +95,7 @@ function TimeZonePicker(props) {
     id="timezone"
     value={props.value}
     onChange={props.onChange}
-    options={props.timeZones}
+    options={timeZones}
     getOptionLabel={(option) => option.name}
     filterOptions={filterOptions}
     noOptionsText="Try entering a larger city"
