@@ -4,8 +4,8 @@ import LuxonUtils from '@date-io/luxon';
 import { getTimeZones } from "@vvo/tzdb";
 
 import {
-  DatePicker,
-  TimePicker,
+  KeyboardDatePicker,
+  KeyboardTimePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 
@@ -26,8 +26,9 @@ export function DateTimeSelector(props) {
   const [refTimeZone, setRefTimeZone] = useState(
     timeZones.find(zone => zone.name === props.localTimeZone));
 
-  const onRefDateChange = (value) => {
-    props.setRefDate(value.setZone(refTimeZone.name, { keepLocalTime: true }));
+  const onRefDateChange = (date, value) => {
+    if (date != null && date.isValid)
+      props.setRefDate(date.setZone(refTimeZone.name, { keepLocalTime: true }));
   }
 
   const onRefTimeZoneChange = (event, value) => {
@@ -41,14 +42,15 @@ export function DateTimeSelector(props) {
     <Box>
       <p>RefDate:{props.refDate.toString()} [{refTimeZone?.name ?? "Null"}]</p>
       <MuiPickersUtilsProvider utils={LuxonUtils}>
-        <DatePicker
+        <KeyboardDatePicker
           value={props.refDate}
           onChange={onRefDateChange}
-          format="DD"
+          format="yyyy-MM-dd"
           disableFuture
           hideTabs
-          autoOk={true}
+          autoOk
           minDate={new Date(1910, 1, 1)}
+          maxDate={new Date(2009, 11, 31)}
           openTo="year"
           label="Date of birth"
           inputVariant="outlined"
@@ -67,13 +69,12 @@ export function DateTimeSelector(props) {
           <AccordionDetails>
             <Box style={{ width: "100%" }}>
               <TimeZonePicker value={refTimeZone} onChange={onRefTimeZoneChange} classes={props.classes} />
-              <TimePicker
+              <KeyboardTimePicker
                 value={props.refDate}
                 onChange={onRefDateChange}
                 format="HH:mm"
                 minutesStep={5}
-                ampm={false}
-                autoOk={true}
+                autoOk
                 label="Time of birth (local)"
                 fullWidth
                 className={props.classes.input}
