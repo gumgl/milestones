@@ -1,34 +1,32 @@
 export const Generator =
 {
-  map: (f,gf) => function* (...args)
-    {
-      for (const x of gf (...args))
-        yield f (x)
-    },
-  filter: (f,gf) => function* (...args)
-    {
-      for (const x of gf (...args))
-        if (f (x))
-          yield x
-    },
-  take: function(n, gi) {
-    let list=[];
-    for (let i=0, c=gi.next();
-      !c.done && i<n;
-      i++, c=gi.next())
+  map: (f, gf) => function* (...args) {
+    for (const x of gf(...args))
+      yield f(x)
+  },
+  filter: (f, gf) => function* (...args) {
+    for (const x of gf(...args))
+      if (f(x))
+        yield x
+  },
+  take: function (n, gi) {
+    let list = [];
+    for (let i = 0, c = gi.next();
+      !c.done && i < n;
+      i++, c = gi.next())
       list[i] = c.value;
     return list;
   },
-  takeWhile: function(f, gi) {
+  takeWhile: function (f, gi) {
     let list = [];
-    for (let c=gi.next();
+    for (let c = gi.next();
       !c.done && f(c.value);
-      c=gi.next())
+      c = gi.next())
       list.push(c.value);
     return list;
   },
-  nth: function(n){
-    return [,'st','nd','rd'][n/10%10^1&&n%10]||'th'
+  nth: function (n) {
+    return [, 'st', 'nd', 'rd'][n / 10 % 10 ^ 1 && n % 10] || 'th'
   } // credit to https://stackoverflow.com/a/39466341/646562
 };
 
@@ -37,43 +35,43 @@ export const Sequences = [
     id: "powers10",
     name: "10^n",
     oeis: "A011557",
-    gf: function*() {
+    gf: function* () {
       for (let n = 1; ; n++)
-        yield {value: Math.pow(10,n), n: n};
+        yield { value: Math.pow(10, n), n: n };
     },
     display: (item) => item.value.toLocaleString(),//"10^" + item.params[0]
-    explain: (item) => "The first (decimal) number with "+(item.n+1)+" digits",
+    explain: (item) => "The first (decimal) number with " + (item.n + 1) + " digits",
   },
   {
     id: "powers2",
     name: "2^n",
     oeis: "A000079",
-    gf: function*() {
+    gf: function* () {
       for (let n = 1; ; n++)
-        yield {value: Math.pow(2,n), n: n};
+        yield { value: Math.pow(2, n), n: n };
     },
     display: (item) => "2^" + item.n,
-    explain: (item) => "2^" + item.n+" = "+item.value,
+    explain: (item) => "2^" + item.n + " = " + item.value,
   },
   {
     id: "repdigit",
     name: "[a]^n (repeated digits)",
     oeis: "A010785",
-    gf: function*() {
-      for (let n=1, base=1; ; base=base*10+1, n++)
-        for (let a=1; a<=9; a++)
-          yield {value: base*a, a: a, n: n};
+    gf: function* () {
+      for (let n = 1, base = 1; ; base = base * 10 + 1, n++)
+        for (let a = 1; a <= 9; a++)
+          yield { value: base * a, a: a, n: n };
     },
     display: (item) => item.value.toLocaleString(),
-    explain: (item) => item.a+" repeated "+item.n+" times",
+    explain: (item) => item.a + " repeated " + item.n + " times",
   },
   {
-    id:"n10x",
+    id: "n10x",
     name: "a * 10^n (for small a)",
     oeis: "A037124",
-    gf: function*() {
-      for (let n=1; ; n++)
-        for (let a=2; a<=9; a++)
+    gf: function* () {
+      for (let n = 1; ; n++)
+        for (let a = 2; a <= 9; a++)
           yield {
             value: a * Math.pow(10, n),
             a: a,
@@ -81,28 +79,28 @@ export const Sequences = [
           };
     },
     display: (item) => item.value.toLocaleString(),
-    explain: (item) => item.a+" followed by "+item.n+" zeroes",
+    explain: (item) => item.a + " followed by " + item.n + " zeroes",
   },
   {
     id: "factorial",
     name: "n! (factorial)",
     oeis: "A005150",
-    gf: function*() {
+    gf: function* () {
       for (let n = 1, m = 1; ; n++, m *= n)
-        yield {value: m, n: n};
+        yield { value: m, n: n };
     },
     display: (item) => item.n + "!",
-    explain: (item) => item.n+"*"+(item.n-1)+"*...*2*1 = "+item.value.toLocaleString()
+    explain: (item) => item.n + "*" + (item.n - 1) + "*...*2*1 = " + item.value.toLocaleString()
   },
   {
-    id:"lookandsay",
+    id: "lookandsay",
     name: "Look-and-say terms",
     oeis: "A005150",
-    gf: function*() {
+    gf: function* () {
       let nextTerm = (term) => {
         let result = "";
-        for (let i=0, c=0, prev; i < term.length; i++) {
-          if (c === 0 || term[i] !== prev ) {
+        for (let i = 0, c = 0, prev; i < term.length; i++) {
+          if (c === 0 || term[i] !== prev) {
             if (c !== 0)
               result += "" + c + prev;
             prev = term[i];
@@ -115,7 +113,7 @@ export const Sequences = [
         return result;
       };
       for (let term = "1"; ; term = nextTerm(term))
-        yield {value: term};
+        yield { value: term };
     },
     display: (item) => item.value,
     explain: (item) => "See OEIS page of the look-and-say sequence :)"
@@ -124,35 +122,35 @@ export const Sequences = [
     id: "fib",
     name: "Fibonacci numbers",
     oeis: "A000045",
-    gf: function*() {
-      yield {value: 0, params: []};
-      yield {value: 1, params: []};
-      for (let a = 0, b = 1, n=1; ; b = a + b, a = b - a, n++)
-        yield {value: a+b, n: n};
+    gf: function* () {
+      yield { value: 0, params: [] };
+      yield { value: 1, params: [] };
+      for (let a = 0, b = 1, n = 1; ; b = a + b, a = b - a, n++)
+        yield { value: a + b, n: n };
     },
-    display: (item) => "F_"+item.n,
-    explain: (item) => item.n+Generator.nth(item.n)+" Fibonacci number = "+item.value.toLocaleString()
+    display: (item) => "F_" + item.n,
+    explain: (item) => item.n + Generator.nth(item.n) + " Fibonacci number = " + item.value.toLocaleString()
   },
   {
     id: "1ton",
     name: "[1..n] for n-digit numbers",
     oeis: "A007908",
-    gf: function*() {
-      for (let n = 1, term="1"; ; n++, term += n)
-        yield {value: Number(term), n: n};
+    gf: function* () {
+      for (let n = 1, term = "1"; ; n++, term += n)
+        yield { value: Number(term), n: n };
     },
     display: (item) => item.value.toLocaleString(),
-    explain: (item) => "All the digits from 1 up to "+item.n
+    explain: (item) => "All the digits from 1 up to " + item.n
   },
   {
     id: "nto1",
     name: "[n..1] for n-digit numbers",
     oeis: "A000422",
-    gf: function*() {
-      for (let n = 1, term="1"; ; n++, term = n + term)
-        yield {value: Number(term), n: n};
+    gf: function* () {
+      for (let n = 1, term = "1"; ; n++, term = n + term)
+        yield { value: Number(term), n: n };
     },
     display: (item) => item.value.toLocaleString(),
-    explain: (item) => "All the digits from "+item.n+" down to 1"
+    explain: (item) => "All the digits from " + item.n + " down to 1"
   },
 ];
