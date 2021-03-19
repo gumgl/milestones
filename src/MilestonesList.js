@@ -76,7 +76,7 @@ function Milestone(props) {
       <Tooltip title={milestone.explanation} placement="bottom">
         <ListItemText
           primary={milestone.label}
-          secondary={milestone.date.setZone(props.localTimeZone).toLocaleString(
+          secondary={(!props.useTimePrecision?"On ":"") + milestone.date.setZone(props.localTimeZone).toLocaleString(
             props.useTimePrecision ? {
               year: 'numeric',
               month: 'short',

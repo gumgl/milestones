@@ -9,11 +9,10 @@ import { DateTime } from "luxon";
 
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
 
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
-
-
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { makeStyles } from '@material-ui/core/styles';
@@ -24,7 +23,6 @@ export default function App() {
   const classes = useStyles();
 
   const [refDate, setRefDate] = useState(DateTime.local(1969, 6, 24));
-  //const [refDateTZ, setRefDateTZ] = useState(refDate);
 
   const [useTimePrecision, setUseTimePrecision] = useState(false);
 
@@ -32,12 +30,11 @@ export default function App() {
     Object.fromEntries(Object.values(Sequences).map(s => [s.id, false]))
   );
 
-
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-      <div className={classes.paper}>
-        <DateTimeSelector {...{ refDate, setRefDate, useTimePrecision, setUseTimePrecision, localTimeZone }} />
+      <div  className={classes.paper}>
+        <DateTimeSelector {...{ refDate, setRefDate, useTimePrecision, setUseTimePrecision, localTimeZone, classes }} />
 
         <SequenceSelector {...{ sequenceOptions, setSequenceOptions }} />
 
@@ -52,34 +49,23 @@ export default function App() {
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    //marginTop: theme.spacing(8),
+    marginTop: theme.spacing(3),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
   },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-  formControl: {
-    margin: theme.spacing(3),
-  },
   root: {
     width: '100%',
-    maxWidth: 560,
+    //maxWidth: 560,
     backgroundColor: theme.palette.background.paper,
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
     flexShrink: 0,
   },
+  input: {
+    margin: theme.spacing(1),
+  }
 }));
 
 function Copyright() {

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import LuxonUtils from '@date-io/luxon';
 import { getTimeZones } from "@vvo/tzdb";
+import { DateTime } from "luxon";
 
 import {
   DatePicker,
@@ -46,30 +47,41 @@ export function DateTimeSelector(props) {
         <DatePicker
           value={props.refDate}
           onChange={onRefDateChange}
-          format="MMM d, y"
+          labelFunc={new Intl.DateTimeFormat('default', DateTime.DATE_MED_WITH_WEEKDAY).format}
           disableFuture
           hideTabs
           autoOk={true}
           minDate={new Date(1910, 1, 1)}
           openTo="year"
           label="Date of birth"
+          inputVariant="outlined"
+          fullWidth
+          style={{backgroundColor:"#FFF"}}
+          className={props.classes.input}
         />
-        <Accordion expanded={props.useTimePrecision} onChange={e => props.setUseTimePrecision(!props.useTimePrecision)}>
+        <Accordion 
+          expanded={props.useTimePrecision}
+          onChange={e => props.setUseTimePrecision(!props.useTimePrecision)}
+          variant="outlined"
+          className={props.classes.input}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography className="classes.heading">Time-of-day precision</Typography>
+            <Typography className={props.classes.heading}>Time-of-day precision</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <TimeZonePicker timeZones={timeZones} value={refTimeZone} onChange={onRefTimeZoneChange} />
-
-            <TimePicker
-              value={props.refDate}
-              onChange={onRefDateChange}
-              format="HH:mm"
-              minutesStep={5}
-              ampm={false}
-              autoOk={true}
-              label="Local time of birth"
-            />
+            <Box style={{width:"100%"}}>
+              <TimeZonePicker timeZones={timeZones} value={refTimeZone} onChange={onRefTimeZoneChange} classes={props.classes} />
+              <TimePicker
+                value={props.refDate}
+                onChange={onRefDateChange}
+                format="HH:mm"
+                minutesStep={5}
+                ampm={false}
+                autoOk={true}
+                label="Time of birth (local)"
+                fullWidth
+                className={props.classes.input}
+              />
+            </Box>
           </AccordionDetails>
         </Accordion>
 
@@ -89,8 +101,9 @@ function TimeZonePicker(props) {
     options={props.timeZones}
     getOptionLabel={(option) => option.name}
     filterOptions={filterOptions}
-    style={{ width: 300 }}
-    noOptionsText="Try typing a larger city"
-    renderInput={(params) => <TextField {...params} label="Birth Time Zone (search by city)" variant="outlined" />}
+    noOptionsText="Try entering a larger city"
+    fullWidth
+    className={props.classes.input}
+    renderInput={(params) => <TextField {...params} label="Birth time zone (search by city)" />}
   />);
 }
