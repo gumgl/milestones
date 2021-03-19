@@ -57,7 +57,7 @@ function SequenceOption(props) {
           disableRipple
         />
       </ListItemIcon>
-      <ListItemText primary={s.name} />
+      <ListItemText primary={s.friendlyName} />
       <ListItemSecondaryAction>
         <Tooltip title={s.oeis} placement="right">
           <IconButton edge="end" aria-label="info"

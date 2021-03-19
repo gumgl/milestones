@@ -34,6 +34,7 @@ export const Sequences = [
   {
     id: "powers10",
     name: "10^n",
+    friendlyName: "10, 100, 1000, 10000, ...",
     oeis: "A011557",
     gf: function* () {
       for (let n = 1; ; n++)
@@ -45,6 +46,7 @@ export const Sequences = [
   {
     id: "powers2",
     name: "2^n",
+    friendlyName: "2, 256, 4096, ... (powers of 2)",
     oeis: "A000079",
     gf: function* () {
       for (let n = 1; ; n++)
@@ -56,6 +58,7 @@ export const Sequences = [
   {
     id: "repdigit",
     name: "[a]^n (repeated digits)",
+    friendlyName: "11111, 222, 5555, ... (repeated digits)",
     oeis: "A010785",
     gf: function* () {
       for (let n = 1, base = 1; ; base = base * 10 + 1, n++)
@@ -68,6 +71,7 @@ export const Sequences = [
   {
     id: "n10x",
     name: "a * 10^n (for small a)",
+    friendlyName: "2000, 30000, 800 ... (many zeroes)",
     oeis: "A037124",
     gf: function* () {
       for (let n = 1; ; n++)
@@ -84,6 +88,7 @@ export const Sequences = [
   {
     id: "factorial",
     name: "n! (factorial)",
+    friendlyName: "4!, 5!, 9!, .. (factorials)",
     oeis: "A005150",
     gf: function* () {
       for (let n = 1, m = 1; ; n++, m *= n)
@@ -95,6 +100,7 @@ export const Sequences = [
   {
     id: "lookandsay",
     name: "Look-and-say terms",
+    friendlyName: "Look-and-say sequence",
     oeis: "A005150",
     gf: function* () {
       let nextTerm = (term) => {
@@ -121,6 +127,7 @@ export const Sequences = [
   {
     id: "fib",
     name: "Fibonacci numbers",
+    friendlyName: "1, 1, 2, 3, 5, 8, ... (Fibonacci)",
     oeis: "A000045",
     gf: function* () {
       yield { value: 0, params: [] };
@@ -134,6 +141,7 @@ export const Sequences = [
   {
     id: "1ton",
     name: "[1..n] for n-digit numbers",
+    friendlyName: "12, 123, 1234, ...",
     oeis: "A007908",
     gf: function* () {
       for (let n = 1, term = "1"; ; n++, term += n)
@@ -145,6 +153,7 @@ export const Sequences = [
   {
     id: "nto1",
     name: "[n..1] for n-digit numbers",
+    friendlyName: "21, 321, 4321, ...",
     oeis: "A000422",
     gf: function* () {
       for (let n = 1, term = "1"; ; n++, term = n + term)
