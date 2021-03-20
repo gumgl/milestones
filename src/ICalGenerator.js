@@ -61,7 +61,7 @@ export function ICalGenerator(props) {
 
 function DownloadButton(props) {
   const iCalText = generateCalendar(props.milestones, props.refDate, props.useTimePrecision);
-  
+
   const blob = new Blob([iCalText], { type: 'text/plain' });
 
   const url = window.URL.createObjectURL(blob);
@@ -77,9 +77,10 @@ function DownloadButton(props) {
     Download ICS File
     </Button>
     <textarea>{iCalText}</textarea>
-    </>
+  </>
 }
 
+// https://tools.ietf.org/html/rfc5545#section-3.7 Calendar Properties
 function generateCalendar(milestones, refDate, useTimePrecision) {
   const text = `BEGIN:VCALENDAR
 PRODID:-//Guillaume Labranche//Custom iCalendar Generator//EN
@@ -91,25 +92,29 @@ END:VCALENDAR`;
   return text.replaceAll('\n', '\r\n');
 }
 
+// https://tools.ietf.org/html/rfc5545#section-3.6.1 Event Component
 function generateEvent(milestone, refDate, useTimePrecision) {
   const name = "You";
   const dateFormat = useTimePrecision ? "FFFF" : "DDD";
+
+  const title = `${name} are ${milestone.label} old!`;
+
   const description = `On ${milestone.date.toFormat(dateFormat)}, exactly ${milestone.label} will have passed `
     + `since ${refDate.toFormat(dateFormat)}.`
     + `\n\nThat's ${milestone.explanation}!`;
-  // TODO: escape "," and maybe other characters
+
   return `BEGIN:VEVENT
 UID:${milestone.uid}
 URL:https://gumgl.github.io/milestones/
 ${generateDateComponent("DTSTAMP", DateTime.now(), true, true)}
 ${generateDateComponent("DTSTART", milestone.date, useTimePrecision, true)}
-SUMMARY:${name} are ${milestone.label} old!
-${generateDescription(description)}
+${generateTextComponent("SUMMARY", title)}
+${generateTextComponent("DESCRIPTION", description)}
 END:VEVENT`;
-//${generateDateComponent("DTEND", milestone.date.plus({ hours: 1 }), false, true)}
 }
 
-// https://tools.ietf.org/html/rfc5545#section-3.3.5
+// https://tools.ietf.org/html/rfc5545#section-3.3.5 Date-Time
+// https://tools.ietf.org/html/rfc5545#section-3.8.2 Date and Time Component Properties
 function generateDateComponent(name, date, useTimePrecision, utc) {
   const iCalDateTimeFormat = "yyyyLLdd'T'HHmmss";
   const iCalDateFormat = "yyyyLLdd";
@@ -123,14 +128,16 @@ function generateDateComponent(name, date, useTimePrecision, utc) {
     return `${name.toUpperCase()};VALUE=DATE:${date.toFormat(iCalDateFormat)}`
 }
 
-// https://tools.ietf.org/html/rfc5545#section-3.8.1.5
-function generateDescription(desc) {
-  return generateMultilineComponent("DESCRIPTION", desc);
-}
-
-function generateMultilineComponent(name, text) {
+// https://tools.ietf.org/html/rfc5545#section-3.1 Content Lines
+// https://tools.ietf.org/html/rfc5545#section-3.3.11 Text
+function generateTextComponent(name, text) {
   return (name.toUpperCase() + ":" + text)
-    .replaceAll("\n", "\\n") // Replace newlines with \n
+    .replaceAll('\n', '\\n') // Replace newlines with \n
+    .replaceAll(',', '\\,') // Escape commas
+    .replaceAll(';', '\\;') // Escape semicolons
+    .replaceAll('\\', '\\\\;') // Escape backslashes
     .match(/(.{1,70})/g) // Split into lines of 70 chars
     .join("\n "); // Merge line strings into a single string separated by newlines
+  
+  // What if a line-split happens in the middle of an escape sequence? I manually tested it, not an issue.
 }
