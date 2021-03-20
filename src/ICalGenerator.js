@@ -31,7 +31,7 @@ export function ICalGenerator(props) {
 
   return <>
     <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-      Open responsive dialog
+      Export to iCalendar file
     </Button>
     <Dialog fullScreen={fullScreen} open={open} onClose={handleClose}>
       <DialogTitle id="responsive-dialog-title">{"Download milestones as ICS File"}</DialogTitle>
@@ -60,6 +60,8 @@ function generateCalendar(milestones, refDate, useTimePrecision) {
   const text = `BEGIN:VCALENDAR
 PRODID:-//Guillaume Labranche//Custom iCalendar Generator//EN
 VERSION:2.0
+X-WR-CALNAME:Milestones
+X-WR-TIMEZONE:${refDate.zoneName}
 ${milestones.map(m => generateEvent(m, refDate, useTimePrecision)).join('\n')}
 END:VCALENDAR`;
   return text.replaceAll('\n', '\r\n');
@@ -71,26 +73,29 @@ function generateEvent(milestone, refDate, useTimePrecision) {
   const description = `On ${milestone.date.toFormat(dateFormat)}, exactly ${milestone.label} will have passed `
     + `since ${refDate.toFormat("FFFF")}`
     + `\nThat's ${milestone.explanation}!`;
-
+  // TODO: escape "," and maybe other characters
   return `BEGIN:VEVENT
 UID:${milestone.date.toSeconds()}-${milestone.value}
 URL:https://gumgl.github.io/milestones/
-${generateDateComponent("DTSTAMP", DateTime.now(), true)}
-${generateDateComponent("DTSTART", milestone.date, true)}
-${generateDateComponent("DTEND", milestone.date.plus({ hours: 1 }), true)}
+${generateDateComponent("DTSTAMP", DateTime.now(), true, true)}
+${generateDateComponent("DTSTART", milestone.date, useTimePrecision, true)}${/*generateDateComponent("DTEND", milestone.date.plus({ hours: 1 }), false, true)*/}
 SUMMARY:${name} are ${milestone.label} old!
 ${generateDescription(description)}
 END:VEVENT`;
 }
 
 // https://tools.ietf.org/html/rfc5545#section-3.3.5
-function generateDateComponent(name, date, utc) {
-  const iCalDateFormat = "yyyyLLdd'T'HHmmss";
+function generateDateComponent(name, date, useTimePrecision, utc) {
+  const iCalDateTimeFormat = "yyyyLLdd'T'HHmmss";
+  const iCalDateFormat = "yyyyLLdd";
 
-  if (utc)
-    return `${name.toUpperCase()}:${date.toFormat(iCalDateFormat)}Z`
-  else
-    return `${name.toUpperCase()};TZID=${date.zoneName}:${date.toFormat(iCalDateFormat)}`
+  if (useTimePrecision) {
+    if (utc)
+      return `${name.toUpperCase()}:${date.setZone("utc").toFormat(iCalDateTimeFormat)}Z`
+    else
+      return `${name.toUpperCase()};TZID=${date.zoneName}:${date.toFormat(iCalDateTimeFormat)}`
+  } else
+    return `${name.toUpperCase()};VALUE=DATE:${date.toFormat(iCalDateFormat)}`
 }
 
 // https://tools.ietf.org/html/rfc5545#section-3.8.1.5
@@ -99,10 +104,10 @@ function generateDescription(desc) {
 }
 
 function generateMultilineComponent(name, text) {
-  return (name.toUpperCase() + ": " + text)
-    .replaceAll("\n", "\\n ")
-    .match(/(.{1,70})/g)
-    .join("\n ");
+  return (name.toUpperCase() + ":" + text)
+    .replaceAll("\n", "\\n") // Replace newlines with \n
+    .match(/(.{1,70})/g) // Split into lines of 70 chars
+    .join("\n "); // Merge line strings into a single string separated by newlines
 }
 
 function download() {
