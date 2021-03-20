@@ -27,8 +27,15 @@ export function DateTimeSelector(props) {
     timeZones.find(zone => zone.name === props.localTimeZone));
 
   const onRefDateChange = (date, value) => {
-    if (date != null && date.isValid)
-      props.setRefDate(date.setZone(refTimeZone.name, { keepLocalTime: true }));
+    if (date != null && date.isValid) {
+      const dateTime = props.refDate.set({
+        year: date.get("year"),
+        month: date.get("month"),
+        day: date.get("day")
+      }).setZone(refTimeZone.name, { keepLocalTime: true });
+
+      props.setRefDate(dateTime);
+    }
   }
 
   const onRefTimeChange = (time, value) => {
@@ -37,13 +44,13 @@ export function DateTimeSelector(props) {
      Fix: We take extract the time and set it on {props.refDate}. */
 
     if (time != null && time.isValid) {
-      const date = props.refDate.set({
+      const dateTime = props.refDate.set({
         hour: time.get("hour"),
         minute: time.get("minute"),
         second: time.get("second")
       }).setZone(refTimeZone.name, { keepLocalTime: true });
-      
-      props.setRefDate(date);
+
+      props.setRefDate(dateTime);
     }
   }
 
@@ -68,7 +75,7 @@ export function DateTimeSelector(props) {
           minDate={new Date(1910, 1, 1)}
           maxDate={new Date(2009, 11, 31)}
           openTo="year"
-          label="Date of birth"  
+          label="Date of birth"
           inputVariant="outlined"
           fullWidth
           style={{ backgroundColor: "#FFF" }}
