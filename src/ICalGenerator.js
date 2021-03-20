@@ -39,10 +39,15 @@ export function ICalGenerator(props) {
       Save to your calendar
     </Button>
     <Dialog fullScreen={fullScreen} open={open} onClose={handleClose}>
-      <DialogTitle id="responsive-dialog-title">Download milestones as ICS File</DialogTitle>
+      <DialogTitle id="responsive-dialog-title">Save to your calendar</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          This will download a file containing all {props.milestones.length} milestones previously listed.<br/>
+          This will download a file containing all {props.milestones.length} milestones previously listed, 
+          which you can then import into your favorite system (
+            <a href="https://support.google.com/calendar/answer/37118" target="_blank" rel="noreferrer">Google Calendar</a>, 
+            <a href="https://support.apple.com/en-us/guide/calendar/icl1023/mac" target="_blank" rel="noreferrer">Apple Calendar</a>, 
+            <a href="https://support.microsoft.com/en-us/office/import-calendars-into-outlook-8e8364e1-400e-4c0f-a573-fe76b5a2d379" target="_blank" rel="noreferrer">Outlook</a>,
+            etc).<br />
           If you want to add or remove sequences, go back and change your selection.
           <DownloadButton refDate={props.refDate} milestones={props.milestones} useTimePrecision={props.useTimePrecision} />
         </DialogContentText>
