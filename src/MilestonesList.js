@@ -1,5 +1,6 @@
 import React from 'react';
 import { Generator, Sequences } from './Sequences';
+import { ICalGenerator } from './ICalGenerator';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -53,16 +54,22 @@ export function MilestonesList(props) {
     return milestones;
   }
 
+  const milestones = computeMilestones(props.refDate, props.sequenceOptions);
 
-  return (<List>
-    {computeMilestones(props.refDate, props.sequenceOptions).map((milestone) =>
-      <Milestone
-        key={milestone.date.toMillis() + "-" + milestone.value}
-        milestone={milestone}
-        refDate={props.refDate}
-        useTimePrecision={props.useTimePrecision}
-        localTimeZone={props.localTimeZone} />)
-    }</List>);
+  return <>
+    <List>
+      {milestones.map((milestone) =>
+        <Milestone
+          key={milestone.date.toSeconds() + "-" + milestone.value}
+          milestone={milestone}
+          refDate={props.refDate}
+          useTimePrecision={props.useTimePrecision}
+          localTimeZone={props.localTimeZone} />)}
+      </List>
+    <ICalGenerator useTimePrecision={props.useTimePrecision}
+      milestones={milestones}
+      refDate={props.refDate} />
+    </>;
 }
 
 function Milestone(props) {
