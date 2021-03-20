@@ -53,7 +53,7 @@ export const Sequences = [
         yield { value: Math.pow(2, n), n: n };
     },
     display: (item) => "2^" + item.n,
-    explain: (item) => "2^" + item.n + " = " + item.value,
+    explain: (item) => "2^" + item.n + " = " + item.value.toLocaleString(),
   },
   {
     id: "repdigit",

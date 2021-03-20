@@ -40,13 +40,18 @@ export function MilestonesList(props) {
           let nearFuture = upperBounded.filter(
             dateFilter(refDate, unit, { months: -1 }, false));
 
-          let tagged = nearFuture.map((item) => ({
-            date: refDate.plus({ [unit]: item.value }),
-            label: s.display(item) + " " + unit,
-            explanation: s.explain(item),
-            value: item.value
-          }));
-          milestones = milestones.concat(tagged);
+          let milestone = nearFuture.map((item) => {
+            const date = refDate.plus({ [unit]: item.value }).setZone(props.localTimeZone);
+            return {
+              uid: date.toSeconds() + item.value,
+              date: date,
+              label: s.display(item) + " " + unit,
+              explanation: s.explain(item),
+              value: item.value
+            }
+          });
+
+          milestones = milestones.concat(milestone);
         }
 
     milestones.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
@@ -60,25 +65,23 @@ export function MilestonesList(props) {
     <List>
       {milestones.map((milestone) =>
         <Milestone
-          key={milestone.date.toSeconds() + "-" + milestone.value}
+          key={milestone.uid}
           milestone={milestone}
           refDate={props.refDate}
-          useTimePrecision={props.useTimePrecision}
-          localTimeZone={props.localTimeZone} />)}
-      </List>
+          useTimePrecision={props.useTimePrecision} />)}
+    </List>
     <ICalGenerator useTimePrecision={props.useTimePrecision}
       milestones={milestones}
       refDate={props.refDate} />
-    </>;
+  </>;
 }
 
 function Milestone(props) {
   const milestone = props.milestone;
-  const localDate = milestone.date.setZone(props.localTimeZone);
 
   const wolframAlphaURL = "https://www.wolframalpha.com/input/?i=" + encodeURIComponent(
     props.useTimePrecision ?
-      props.refDate.toFormat("yyyy-LL-dd HH:mm 'UTC'ZZZ") + " + " + milestone.label + " to " + localDate.toFormat("ZZZZZ") :
+      props.refDate.toFormat("yyyy-LL-dd HH:mm 'UTC'ZZZ") + " + " + milestone.label + " to " + milestone.date.toFormat("ZZZZZ") :
       props.refDate.toFormat("yyyy-LL-dd ") + " + " + milestone.label
   );
 
@@ -90,7 +93,7 @@ function Milestone(props) {
       <Tooltip title={milestone.explanation} placement="bottom">
         <ListItemText
           primary={milestone.label}
-          secondary={localDate.toFormat(props.useTimePrecision ? "DD 'at' T ZZZZ" : "'On' DD")} />
+          secondary={milestone.date.toFormat(props.useTimePrecision ? "DD 'at' T ZZZZ" : "'On' DD")} />
       </Tooltip>
       <ListItemSecondaryAction>
         <Tooltip title="Verify with Wolfram|Alpha" placement="right">
