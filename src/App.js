@@ -4,20 +4,33 @@ import { Sequences } from './Sequences';
 import { DateTimeSelector } from './DateTimeSelector';
 import { SequenceSelector } from './SequenceSelector';
 import { MilestonesList } from './MilestonesList';
+import { ShareModal } from './Share';
 
 import { DateTime } from "luxon";
 
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-
-import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
+import Typography from '@material-ui/core/Typography';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { makeStyles } from '@material-ui/core/styles';
 
 const localTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    marginTop: theme.spacing(3),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  root: {
+    width: '100%',
+    //maxWidth: 560,
+    backgroundColor: theme.palette.background.paper,
+  },
+}));
 
 export default function App() {
   const classes = useStyles();
@@ -33,12 +46,14 @@ export default function App() {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-      <div  className={classes.paper}>
+      <div className={classes.paper}>
         <DateTimeSelector {...{ refDate, setRefDate, useTimePrecision, setUseTimePrecision, localTimeZone, classes }} />
 
         <SequenceSelector {...{ sequenceOptions, setSequenceOptions }} />
 
         <MilestonesList {...{ refDate, useTimePrecision, sequenceOptions, localTimeZone }} />
+
+        <ShareModal {...{ refDate, useTimePrecision, sequenceOptions }} />
       </div>
       <Box mt={8}>
         <Copyright />
@@ -46,27 +61,6 @@ export default function App() {
     </Container>
   );
 }
-
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(3),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  root: {
-    width: '100%',
-    //maxWidth: 560,
-    backgroundColor: theme.palette.background.paper,
-  },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    flexShrink: 0,
-  },
-  input: {
-    margin: theme.spacing(1),
-  }
-}));
 
 function Copyright() {
   return (
