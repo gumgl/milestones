@@ -60,6 +60,7 @@ export default function App() {
   }, []); // Run once (since we declare no dependency)
 
   return (
+    <React.StrictMode>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
@@ -75,6 +76,7 @@ export default function App() {
           <Copyright />
         </Box>
       </Container>
+    </React.StrictMode>
   );
 }
 
