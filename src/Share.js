@@ -31,6 +31,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const [shortDateOnlyFormat, shortDatetimeFormat] = ["yyyyLLdd", "yyyyLLdd'T'HHmm"];
+
 export function ShareModal(props) {
 
   const theme = useTheme();
@@ -141,27 +143,26 @@ export function ShareModal(props) {
 
 export function generateShareURL(props, shareConfig) {
   const url = new URL(window.location.href);
-
+  console.log(props.refDate);
   if (shareConfig) {
-    url.searchParams.set("d", props.useTimePrecision ? props.refDate.toISO() : props.refDate.toISODate());
+    url.searchParams.set("d", props.refDate.toFormat(props.useTimePrecision ? shortDatetimeFormat : shortDateOnlyFormat));
     if (props.useTimePrecision)
       url.searchParams.set("z", props.refTimeZone.name);
     url.searchParams.set("o", boolArrayToHex(Array.from(props.sequenceOptions.values())));
   }
-
   return url;
 }
 
 export function parseShareURL(url, setRefDate, setRefTimeZoneByName, setTimePrecision, sequenceOptions, setSequenceOptions) {
   if (url.searchParams.has("d")) {
-    const date = DateTime.fromISO(url.searchParams.get("d"));
+    const useTimePrecision = url.searchParams.get("d").length !== shortDateOnlyFormat.length;
+    const date = DateTime.fromFormat(url.searchParams.get("d"), useTimePrecision ? shortDatetimeFormat : shortDateOnlyFormat);
     if (date.isValid) {
-      const useTimePrecision = url.searchParams.get("d").length !== DateTime.now().toISODate().length;
       setTimePrecision(useTimePrecision);
       if (useTimePrecision && url.searchParams.has("z")) {
         const timeZone = url.searchParams.get("z");
         setRefTimeZoneByName(timeZone);
-        setRefDate(date.setZone(timeZone));
+        setRefDate(date.setZone(timeZone, { keepLocalTime: true }));
       } else {
         setRefDate(date);
       }
