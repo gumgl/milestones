@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -47,6 +47,15 @@ export function ShareModal(props) {
   const shareText = shareConfig ? `See the milestones of my life starting on ${props.refDate.toFormat("D")}!`
     : "See the cool milestones of your life:";
   const shareURL = generateShareURL(props, shareConfig);
+  const shareURLInputRef = useRef();
+
+  // Whenever the share URL changes, select it
+  useEffect(() => {
+    if (shareURLInputRef.current != null) {
+      shareURLInputRef.current.focus();
+      shareURLInputRef.current.select();
+    }
+  }, [shareURL]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -97,12 +106,18 @@ export function ShareModal(props) {
         </DialogContentText>
         <TextField
           value={shareURL}
+          inputRef={shareURLInputRef}
           className={classes.margin}
           autoFocus
           multiline
           rowsMax={2}
           InputProps={{
-            readOnly: true,
+            onFocus: (event) => {
+              event.preventDefault();
+              const { target } = event;
+              target.focus();
+              target.select();
+            },
             fontSize: "small",
             endAdornment: (
               <InputAdornment position="end">
@@ -143,7 +158,7 @@ export function ShareModal(props) {
 
 export function generateShareURL(props, shareConfig) {
   const url = new URL(window.location.href);
-  console.log(props.refDate);
+
   if (shareConfig) {
     url.searchParams.set("d", props.refDate.toFormat(props.useTimePrecision ? shortDatetimeFormat : shortDateOnlyFormat));
     if (props.useTimePrecision)
