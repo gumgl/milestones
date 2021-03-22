@@ -39,8 +39,11 @@ const useStyles = makeStyles({
     margin: '0 2px',
     transform: 'scale(0.8)',
   },
-  title: {
-    fontSize: 14,
+  subtitleContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignContent: 'center',
   },
   pos: {
     marginBottom: 12,
@@ -51,6 +54,7 @@ const useStyles = makeStyles({
 });
 
 export function ICalGenerator(props) {
+  
   const classes = useStyles();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -76,7 +80,7 @@ export function ICalGenerator(props) {
       Export to calendar
     </Button>
     <Dialog fullScreen={fullScreen} open={open} onClose={handleClose}>
-      <DialogTitle id="responsive-dialog-title">Save milestones in your calendar</DialogTitle>
+      <DialogTitle id="responsive-dialog-title">Save milestones to your calendar</DialogTitle>
       <DialogContent>
         <DialogContentText>
           This will download a file containing all {props.milestones.length} milestones previously listed,
@@ -126,17 +130,17 @@ function EventPreview(props) {
   const milestone = props.milestone;
 
   return <Card className={classes.root} variant="outlined">
-    <CardContent>
+    <CardContent style={{padding:12}}>
       <Grid container spacing={2}>
-        <Grid item xs={8}>
+        <Grid item xs={6} className={classes.subtitleContainer}>
           <Typography className={classes.title} color="textSecondary" align="left">
             Event Preview
           </Typography>
         </Grid>
-        <Grid item xs={4}>
-          <CardActions align="right">
-            <Button size="small" disabled startIcon={<EditIcon />}>Edit</Button>
+        <Grid item xs={6}>
+          <CardActions style={{flexDirection:"row-reverse"}}>
             <Button size="small" disabled startIcon={<DeleteIcon />}>Delete</Button>
+            <Button size="small" disabled startIcon={<EditIcon />}>Edit</Button>
           </CardActions>
         </Grid>
         <Grid item xs={1}>

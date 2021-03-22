@@ -16,6 +16,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 export function SequenceSelector(props) {
+  
   const sequenceOptionChange = (id) => () => {
     const value = !props.sequenceOptions[id];
 

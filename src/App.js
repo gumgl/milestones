@@ -83,9 +83,10 @@ export default function App() {
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
+      © 2021 Guillaume Labranche <br />
       <Link color="inherit" href="https://github.com/gumgl/milestones">
         Source
-      </Link>{' '}
+      </Link>
     </Typography>
   );
 }

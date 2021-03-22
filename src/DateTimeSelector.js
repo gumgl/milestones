@@ -61,7 +61,8 @@ export function DateTimeSelector(props) {
 
   return (
     <Box>
-      <p>RefDate:{props.refDate.toString()} [{props.refTimeZone?.name ?? "Null"}]</p>
+      {process.env.NODE_ENV === "development" &&
+        <p>RefDate:{props.refDate.toString()} [{props.refTimeZone?.name ?? "Null"}]</p>}
       <MuiPickersUtilsProvider utils={LuxonUtils}>
         <KeyboardDatePicker
           value={props.refDate}
