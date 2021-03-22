@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
 import Snackbar from '@material-ui/core/Snackbar';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -15,10 +14,10 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 import ShareIcon from '@material-ui/icons/Share';
-import CloseIcon from '@material-ui/icons/Close';
 
 import { useTheme, makeStyles } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { DateTime } from 'luxon';
 
 const useStyles = makeStyles((theme) => ({
   margin: {
@@ -33,14 +32,19 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function ShareModal(props) {
+
   const theme = useTheme();
   const classes = useStyles();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [open, setOpen] = useState(false);
-  const [shareConfig, setShareConfig] = useState(false);
+  const [shareConfig, setShareConfig] = useState(true);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarText, setSnackbarText] = useState("");
+
+  const shareText = shareConfig ? `See the milestones of my life starting on ${props.refDate.toFormat("D")}!`
+    : "See the cool milestones of your life:";
+  const shareURL = generateShareURL(props, shareConfig);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -51,7 +55,6 @@ export function ShareModal(props) {
   };
 
   const showSnackbar = (text) => {
-    console.log("Showing snackbar with" + text);
     setSnackbarText(text);
     setSnackbarOpen(true);
   };
@@ -60,9 +63,6 @@ export function ShareModal(props) {
     setSnackbarOpen(false);
   };
 
-  const shareURL = "https://gumgl.github.io/milestones/";
-  const shareText = "Ever wanted to compute all the milestones of your life? Now you can:";
-
   const copyToClipboard = (text, success, failure) => {
     navigator.clipboard.writeText(text).then(success, failure);
   }
@@ -70,9 +70,9 @@ export function ShareModal(props) {
   // TODO: consider not including the text part
   const webShare = async (text, url) => {
     try {
-      await navigator.share({...{text, url}});
+      await navigator.share({ ...{ text, url } });
       showSnackbar("Thanks for sharing!");
-    } catch(err) {
+    } catch (err) {
       //showSnackbar(":(");
     }
   }
@@ -91,7 +91,7 @@ export function ShareModal(props) {
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Blablabla
+          {shareText}
         </DialogContentText>
         <TextField
           value={shareURL}
@@ -112,7 +112,7 @@ export function ShareModal(props) {
                   }}
                 >Copy</Button>
                 <Button color="primary"
-                  onClick={() => {webShare(shareText, shareURL)}}
+                  onClick={() => { webShare(shareText, shareURL) }}
                 >Share</Button>
               </InputAdornment>
             )
@@ -120,10 +120,10 @@ export function ShareModal(props) {
         />
       </DialogContent>
       <DialogActions>
-      <FormControlLabel
-        control={<Checkbox checked={shareConfig} onChange={() => setShareConfig(!shareConfig)} />}
-        label="Share config"
-      />
+        <FormControlLabel
+          control={<Checkbox checked={shareConfig} onChange={() => setShareConfig(!shareConfig)} />}
+          label="Share config"
+        />
         <Button onClick={handleClose} color="primary">
           Close
         </Button>
@@ -137,4 +137,70 @@ export function ShareModal(props) {
       />
     </Dialog>
   </>
+}
+
+export function generateShareURL(props, shareConfig) {
+  const url = new URL(window.location.href);
+
+  if (shareConfig) {
+    url.searchParams.set("d", props.useTimePrecision ? props.refDate.toISO() : props.refDate.toISODate());
+    if (props.useTimePrecision)
+      url.searchParams.set("z", props.refTimeZone.name);
+    url.searchParams.set("o", boolArrayToHex(Array.from(props.sequenceOptions.values())));
+  }
+
+  return url;
+}
+
+export function parseShareURL(url, setRefDate, setRefTimeZoneByName, setTimePrecision, sequenceOptions, setSequenceOptions) {
+  if (url.searchParams.has("d")) {
+    const date = DateTime.fromISO(url.searchParams.get("d"));
+    if (date.isValid) {
+      const useTimePrecision = url.searchParams.get("d").length !== DateTime.now().toISODate().length;
+      setTimePrecision(useTimePrecision);
+      if (useTimePrecision && url.searchParams.has("z")) {
+        const timeZone = url.searchParams.get("z");
+        setRefTimeZoneByName(timeZone);
+        setRefDate(date.setZone(timeZone));
+      } else {
+        setRefDate(date);
+      }
+    }
+  }
+  if (url.searchParams.has("o")) {
+    const hex = url.searchParams.get("o");
+    if (parseInt(hex, 16).toString(16) === hex)
+      setSequenceOptions(setMapValues(sequenceOptions, hexToBoolArray(hex, sequenceOptions.length, false)));
+  }
+}
+
+/* This function takes an array of booleans (e.g. option selection)
+   and returns a hex string representing it.
+   Note that larger arrays map onto smaller ones preserving the values
+   at the correct positions. */
+function boolArrayToHex(arr) {
+  const binaryString = arr.reverse().map(i => (+i).toString()).join("");
+  return parseInt(binaryString, 2).toString(16);
+}
+
+function hexToBoolArray(hex, requiredLength = -1, paddingValue = false) {
+  const binaryString = parseInt(hex, 16).toString(2);
+  const arr = binaryString.split('').map(i => i === "1" ? true : false).reverse();
+
+  return requiredLength === -1 || arr.length === requiredLength ? arr :
+    arr.length < requiredLength ? arr.concat(Array(requiredLength - arr.length).fill(paddingValue)) :
+      arr.slice(0, requiredLength - 1);
+}
+
+function setMapValues(map, values) {
+  const newMap = new Map();
+  const [mapIter, valIter] = [map.keys(), values[Symbol.iterator]()];
+
+  let [key, value] = [mapIter.next(), valIter.next()];
+
+  while (!key.done && !value.done) {
+    newMap.set(key.value, value.value);
+    [key, value] = [mapIter.next(), valIter.next()]
+  }
+  return newMap;
 }

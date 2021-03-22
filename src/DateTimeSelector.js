@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import LuxonUtils from '@date-io/luxon';
 import { getTimeZones } from "@vvo/tzdb";
@@ -23,8 +23,6 @@ import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete
 const timeZones = getTimeZones();
 
 export function DateTimeSelector(props) {
-  const [refTimeZone, setRefTimeZone] = useState(
-    timeZones.find(zone => zone.name === props.localTimeZone));
 
   const onRefDateChange = (date, value) => {
     if (date != null && date.isValid) {
@@ -32,7 +30,7 @@ export function DateTimeSelector(props) {
         year: date.get("year"),
         month: date.get("month"),
         day: date.get("day")
-      }).setZone(refTimeZone.name, { keepLocalTime: true });
+      }).setZone(props.refTimeZone.name, { keepLocalTime: true });
 
       props.setRefDate(dateTime);
     }
@@ -48,7 +46,7 @@ export function DateTimeSelector(props) {
         hour: time.get("hour"),
         minute: time.get("minute"),
         second: time.get("second")
-      }).setZone(refTimeZone.name, { keepLocalTime: true });
+      }).setZone(props.refTimeZone.name, { keepLocalTime: true });
 
       props.setRefDate(dateTime);
     }
@@ -56,14 +54,14 @@ export function DateTimeSelector(props) {
 
   const onRefTimeZoneChange = (event, value) => {
     if (value != null) {
-      setRefTimeZone(value);
+      props.setRefTimeZone(value);
       props.setRefDate(props.refDate.setZone(value.name, { keepLocalTime: true }));
     }
   }
 
   return (
     <Box>
-      <p>RefDate:{props.refDate.toString()} [{refTimeZone?.name ?? "Null"}]</p>
+      <p>RefDate:{props.refDate.toString()} [{props.refTimeZone?.name ?? "Null"}]</p>
       <MuiPickersUtilsProvider utils={LuxonUtils}>
         <KeyboardDatePicker
           value={props.refDate}
@@ -91,7 +89,7 @@ export function DateTimeSelector(props) {
           </AccordionSummary>
           <AccordionDetails>
             <Box style={{ width: "100%" }}>
-              <TimeZonePicker value={refTimeZone} onChange={onRefTimeZoneChange} classes={props.classes} />
+              <TimeZonePicker value={props.refTimeZone} onChange={onRefTimeZoneChange} timeZones={timeZones} classes={props.classes} />
               <KeyboardTimePicker
                 value={props.refDate}
                 onChange={onRefTimeChange}
@@ -119,7 +117,7 @@ function TimeZonePicker(props) {
     id="timezone"
     value={props.value}
     onChange={props.onChange}
-    options={timeZones}
+    options={props.timeZones}
     getOptionLabel={(option) => option.name}
     filterOptions={filterOptions}
     noOptionsText="Try entering a larger city"

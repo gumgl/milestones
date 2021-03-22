@@ -19,10 +19,7 @@ export function SequenceSelector(props) {
   const sequenceOptionChange = (id) => () => {
     const value = !props.sequenceOptions[id];
 
-    props.setSequenceOptions({
-      ...props.sequenceOptions,
-      [id]: value
-    });
+    props.setSequenceOption(id, value);
   };
 
   const list = Sequences.map(s =>
@@ -50,7 +47,7 @@ function SequenceOption(props) {
 
       <ListItemIcon>
         <Checkbox
-          checked={props.sequenceOptions[s.id]}
+          checked={props.sequenceOptions.get(s.id)}
           name={s.id}
           edge="start"
           tabIndex={-1}

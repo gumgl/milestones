@@ -32,7 +32,7 @@ export function MilestonesList(props) {
 
     for (const unit of units)
       for (const s of Sequences)
-        if (sequenceOptions[s.id]) {
+        if (sequenceOptions.get(s.id) === true) {
           let upperBounded = Generator.takeWhile(
             dateFilter(refDate, unit, { years: 10 }, true),
             s.gf());
