@@ -110,6 +110,7 @@ export function ShareModal(props) {
           className={classes.margin}
           autoFocus
           multiline
+          fullWidth
           rowsMax={2}
           InputProps={{
             onFocus: (event) => {

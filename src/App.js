@@ -60,9 +60,8 @@ export default function App() {
 
   return (
     <React.StrictMode>
-      <Container component="main" maxWidth="xs">
+      <Container component="main" maxWidth="xs" className={classes.paper}>
         <CssBaseline />
-        <div className={classes.paper}>
           <DateTimeSelector {...{ refDate, setRefDate, refTimeZone, setRefTimeZone, useTimePrecision, setUseTimePrecision, localTimeZone, classes }} />
 
           <SequenceSelector {...{ sequenceOptions, setSequenceOption }} />
@@ -70,7 +69,6 @@ export default function App() {
           <MilestonesList {...{ refDate, useTimePrecision, sequenceOptions, localTimeZone }} />
 
           <ShareModal {...{ refDate, refTimeZone, useTimePrecision, sequenceOptions }} />
-        </div>
         <Box mt={8}>
           <Footer />
         </Box>
