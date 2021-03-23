@@ -30,9 +30,10 @@ import SubjectIcon from '@material-ui/icons/Subject';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
-const useStyles = makeStyles({
-  root: {
+const useStyles = makeStyles(theme => ({
+  eventPreview: {
     minWidth: 275,
+    backgroundColor: '#fafafa'
   },
   bullet: {
     display: 'inline-block',
@@ -51,7 +52,7 @@ const useStyles = makeStyles({
   description: {
     whiteSpace: 'pre-line',
   }
-});
+}));
 
 export function ICalGenerator(props) {
   
@@ -60,7 +61,7 @@ export function ICalGenerator(props) {
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [open, setOpen] = useState(false);
-  const [titlePattern, setTitlePattern] = useState("I am %s old!");
+  const [titlePattern, setTitlePattern] = useState("Today I am %s old!");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -93,7 +94,7 @@ export function ICalGenerator(props) {
         <EventPreview classes={classes} refDate={props.refDate} milestone={props.milestones[0]} useTimePrecision={props.useTimePrecision} titlePattern={titlePattern} />
       </DialogContent>
       <DialogContent>
-        <TextField label="Customize Title" value={titlePattern} onChange={(e) => setTitlePattern(e.target.value)} fullWidth />
+        <TextField label="Customize Title (%s will be replaced by time span)" value={titlePattern} onChange={(e) => setTitlePattern(e.target.value)} fullWidth />
       </DialogContent>
       <DialogActions>
         <DownloadButton refDate={props.refDate} milestones={props.milestones} useTimePrecision={props.useTimePrecision} titlePattern={titlePattern} />
@@ -129,7 +130,7 @@ function EventPreview(props) {
   const classes = props.classes;
   const milestone = props.milestone;
 
-  return <Card className={classes.root} variant="outlined">
+  return <Card className={classes.eventPreview} variant="outlined">
     <CardContent style={{padding:12}}>
       <Grid container spacing={2}>
         <Grid item xs={6} className={classes.subtitleContainer}>
@@ -232,7 +233,7 @@ function generateEventDescription(milestone, refDate, useTimePrecision) {
 
   return `On ${generateReadableDate(milestone.date, useTimePrecision)}, exactly ${milestone.label} will have passed `
     + `since ${generateReadableDate(refDate, useTimePrecision)}.`
-    + `\n\nThat's ${milestone.explanation}!`
+    + `\n\nThat's ${milestone.explanation}! Doesn't happen often...`
 }
 
 function generateReadableDate(date, useTimePrecision) {
