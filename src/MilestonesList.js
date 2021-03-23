@@ -23,11 +23,17 @@ export function MilestonesList(props) {
 
     // Poor man's currying
     const dateFilter = (date, unit, offSetFromNow, isUpperBound) => (item) => {
-      const candidate = date.plus({ [unit]: item.value });
-      const limit = DateTime.local().plus(offSetFromNow);
+      try {
+        const candidate = date.plus({ [unit]: item.value });
+        const limit = DateTime.local().plus(offSetFromNow);
 
-      return !isNaN(candidate) &&
-        (candidate > limit ^ isUpperBound);
+        return !isNaN(candidate) &&
+          (candidate > limit ^ isUpperBound);
+      }
+      catch (error) { // Fix until https://github.com/moment/luxon/pull/906 is accepted and published
+        if (!error instanceof RangeError)
+          throw error;
+      }
     };
 
     for (const unit of units)
