@@ -37,7 +37,7 @@ export default function App() {
 
   const classes = useStyles();
 
-  const [refDate, setRefDate] = useState(DateTime.local(1969, 6, 24));
+  const [refDate, setRefDate] = useState(DateTime.local(1969, 7, 24));
 
   const [refTimeZone, setRefTimeZone] = useState(
     timeZones.find(zone => zone.name === localTimeZone));
@@ -73,19 +73,19 @@ export default function App() {
           <ShareModal {...{ refDate, refTimeZone, useTimePrecision, sequenceOptions }} />
         </div>
         <Box mt={8}>
-          <Copyright />
+          <Footer />
         </Box>
       </Container>
     </React.StrictMode>
   );
 }
 
-function Copyright() {
+function Footer() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       © 2021 Guillaume Labranche <br />
       <Link color="inherit" href="https://github.com/gumgl/milestones">
-        Source
+        Buy me a coffee
       </Link>
     </Typography>
   );
