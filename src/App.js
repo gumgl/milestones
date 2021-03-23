@@ -11,7 +11,6 @@ import { getTimeZones } from "@vvo/tzdb";
 
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
-import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -84,9 +83,7 @@ function Footer() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       © 2021 Guillaume Labranche <br />
-      <Link color="inherit" href="https://github.com/gumgl/milestones">
-        Buy me a coffee
-      </Link>
+      <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="gumgl" data-color="#3f51b5" data-emoji="🍕" data-font="Inter" data-text="Buy me a pizza slice" data-outline-color="#ffffff" data-font-color="#ffffff" data-coffee-color="#FFDD00" ></script>
     </Typography>
   );
 }
