@@ -80,7 +80,7 @@ export function ICalGenerator(props) {
       disabled={props.milestones.length === 0}>
       Export to calendar
     </Button>
-    <Dialog fullScreen={fullScreen} open={open} onClose={handleClose}>
+    <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} scroll="paper">
       <DialogTitle id="responsive-dialog-title">Save milestones to your calendar</DialogTitle>
       <DialogContent>
         <DialogContentText>
@@ -89,11 +89,7 @@ export function ICalGenerator(props) {
             <Link href="https://support.google.com/calendar/answer/37118" target="_blank" rel="noreferrer">Google Calendar</Link>, <Link href="https://support.apple.com/en-us/guide/calendar/icl1023/mac" target="_blank" rel="noreferrer">Apple Calendar</Link>, <Link href="https://support.microsoft.com/en-us/office/import-calendars-into-outlook-8e8364e1-400e-4c0f-a573-fe76b5a2d379" target="_blank" rel="noreferrer">Outlook</Link>, etc).<br />
           If you want to include more or less sequences, <Link href="#" onClick={handleClose}>close this menu</Link> and change your selection.
         </DialogContentText>
-      </DialogContent>
-      <DialogContent>
         <EventPreview classes={classes} refDate={props.refDate} milestone={props.milestones[0]} useTimePrecision={props.useTimePrecision} titlePattern={titlePattern} />
-      </DialogContent>
-      <DialogContent>
         <TextField label="Customize Title (%s will be replaced by time span)" value={titlePattern} onChange={(e) => setTitlePattern(e.target.value)} fullWidth />
       </DialogContent>
       <DialogActions>
