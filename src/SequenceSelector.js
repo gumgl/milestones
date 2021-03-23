@@ -16,19 +16,13 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 export function SequenceSelector(props) {
-  
-  const sequenceOptionChange = (id) => () => {
-    const value = !props.sequenceOptions[id];
-
-    props.setSequenceOption(id, value);
-  };
 
   const list = Sequences.map(s =>
     <SequenceOption
       key={s.id}
       sequence={s}
       sequenceOptions={props.sequenceOptions}
-      sequenceOptionChange={sequenceOptionChange}
+      setSequenceOption={props.setSequenceOption}
     />);
 
   return (
@@ -43,7 +37,7 @@ function SequenceOption(props) {
 
   return (
     <ListItem key={s.id}
-      onClick={props.sequenceOptionChange(s.id)}
+      onClick={() => props.setSequenceOption(s.id, !props.sequenceOptions.get(s.id))}
       dense button>
 
       <ListItemIcon>
