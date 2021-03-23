@@ -6,7 +6,7 @@ To download all the dependencies from a fresh clone/checkout.
 
 ### `yarn start`
 
-Runs the app in the development mode at [http://localhost:3000](http://localhost:3000) with auto-refresh.
+Runs the app in the development mode at http://localhost:3000 with auto-refresh.
 
 ### `yarn build`
 
@@ -14,7 +14,7 @@ To build the app for production to the `build` folder and go serve them as you p
 
 ### `yarn run deploy`
 
-To publish to [GitHub Pages](https://github.com/gumgl/milestones). (Yes, it [builds and commits](https://create-react-app.dev/docs/deployment/#github-pages) into the `gh-pages` branch!)
+To publish to [GitHub Pages](https://gumgl.github.io/milestones/). (Yes, it [builds and commits](https://create-react-app.dev/docs/deployment/#github-pages) into the `gh-pages` branch!)
 
 
 ### `yarn test`
