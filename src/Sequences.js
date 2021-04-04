@@ -44,16 +44,28 @@ export const Sequences = [
     explain: (item) => "The first (decimal) number with " + (item.n + 1) + " digits",
   },
   {
-    id: "powers2",
-    name: "2^n",
-    friendlyName: "2, 256, 4096, ... (powers of 2)",
-    oeis: "A000079",
+    id: "1ton",
+    name: "[1..n] for n-digit numbers",
+    friendlyName: "12, 123, 1234, ...",
+    oeis: "A007908",
     gf: function* () {
-      for (let n = 1; ; n++)
-        yield { value: Math.pow(2, n), n: n };
+      for (let n = 1, term = "1"; ; n++, term += n)
+        yield { value: Number(term), n: n };
     },
-    display: (item) => "2^" + item.n,
-    explain: (item) => "2^" + item.n + " = " + item.value.toLocaleString(),
+    display: (item) => item.value.toLocaleString(),
+    explain: (item) => "All the digits from 1 up to " + item.n
+  },
+  {
+    id: "nto1",
+    name: "[n..1] for n-digit numbers",
+    friendlyName: "21, 321, 4321, ...",
+    oeis: "A000422",
+    gf: function* () {
+      for (let n = 1, term = "1"; ; n++, term = n + term)
+        yield { value: Number(term), n: n };
+    },
+    display: (item) => item.value.toLocaleString(),
+    explain: (item) => "All the digits from " + item.n + " down to 1"
   },
   {
     id: "repdigit",
@@ -84,6 +96,18 @@ export const Sequences = [
     },
     display: (item) => item.value.toLocaleString(),
     explain: (item) => item.a + " followed by " + item.n + " zeroes",
+  },
+  {
+    id: "powers2",
+    name: "2^n",
+    friendlyName: "2, 256, 4096, ... (powers of 2)",
+    oeis: "A000079",
+    gf: function* () {
+      for (let n = 1; ; n++)
+        yield { value: Math.pow(2, n), n: n };
+    },
+    display: (item) => "2^" + item.n,
+    explain: (item) => "2^" + item.n + " = " + item.value.toLocaleString(),
   },
   {
     id: "factorial",
@@ -137,29 +161,5 @@ export const Sequences = [
     },
     display: (item) => "F_" + item.n,
     explain: (item) => item.n + Generator.nth(item.n) + " Fibonacci number = " + item.value.toLocaleString()
-  },
-  {
-    id: "1ton",
-    name: "[1..n] for n-digit numbers",
-    friendlyName: "12, 123, 1234, ...",
-    oeis: "A007908",
-    gf: function* () {
-      for (let n = 1, term = "1"; ; n++, term += n)
-        yield { value: Number(term), n: n };
-    },
-    display: (item) => item.value.toLocaleString(),
-    explain: (item) => "All the digits from 1 up to " + item.n
-  },
-  {
-    id: "nto1",
-    name: "[n..1] for n-digit numbers",
-    friendlyName: "21, 321, 4321, ...",
-    oeis: "A000422",
-    gf: function* () {
-      for (let n = 1, term = "1"; ; n++, term = n + term)
-        yield { value: Number(term), n: n };
-    },
-    display: (item) => item.value.toLocaleString(),
-    explain: (item) => "All the digits from " + item.n + " down to 1"
   },
 ];
