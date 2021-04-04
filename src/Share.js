@@ -31,7 +31,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const [shortDateOnlyFormat, shortDatetimeFormat] = ["yyyyLLdd", "yyyyLLdd'T'HHmm"];
+const URLConfig = {
+  sequenceOptionsName: "o",
+  dateName: "d",
+  zoneName: "z",
+  shortDateOnlyFormat: "yyyyLLdd",
+  shortDatetimeFormat: "yyyyLLdd'T'HHmm"
+};
 
 export function ShareModal(props) {
 
@@ -161,22 +167,22 @@ export function generateShareURL(props, shareConfig) {
   const url = new URL(window.location.href);
 
   if (shareConfig) {
-    url.searchParams.set("d", props.refDate.toFormat(props.useTimePrecision ? shortDatetimeFormat : shortDateOnlyFormat));
+    url.searchParams.set(URLConfig.dateName, props.refDate.toFormat(props.useTimePrecision ? URLConfig.shortDatetimeFormat : URLConfig.shortDateOnlyFormat));
     if (props.useTimePrecision)
-      url.searchParams.set("z", props.refTimeZone.name);
-    url.searchParams.set("o", boolArrayToHex(Array.from(props.sequenceOptions.values())));
+      url.searchParams.set(URLConfig.zoneName, props.refTimeZone.name);
+    url.searchParams.set(URLConfig.sequenceOptionsName, boolArrayToHex(Array.from(props.sequenceOptions.values())));
   }
   return url;
 }
 
 export function parseShareURL(url, setRefDate, setRefTimeZoneByName, setTimePrecision, sequenceOptions, setSequenceOptions) {
-  if (url.searchParams.has("d")) {
-    const useTimePrecision = url.searchParams.get("d").length !== shortDateOnlyFormat.length;
-    const date = DateTime.fromFormat(url.searchParams.get("d"), useTimePrecision ? shortDatetimeFormat : shortDateOnlyFormat);
+  if (url.searchParams.has(URLConfig.dateName)) {
+    const useTimePrecision = url.searchParams.get(URLConfig.dateName).length !== URLConfig.shortDateOnlyFormat.length;
+    const date = DateTime.fromFormat(url.searchParams.get(URLConfig.dateName), useTimePrecision ? URLConfig.shortDatetimeFormat : URLConfig.shortDateOnlyFormat);
     if (date.isValid) {
       setTimePrecision(useTimePrecision);
-      if (useTimePrecision && url.searchParams.has("z")) {
-        const timeZone = url.searchParams.get("z");
+      if (useTimePrecision && url.searchParams.has(URLConfig.zoneName)) {
+        const timeZone = url.searchParams.get(URLConfig.zoneName);
         setRefTimeZoneByName(timeZone);
         setRefDate(date.setZone(timeZone, { keepLocalTime: true }));
       } else {
@@ -184,10 +190,12 @@ export function parseShareURL(url, setRefDate, setRefTimeZoneByName, setTimePrec
       }
     }
   }
-  if (url.searchParams.has("o")) {
-    const hex = url.searchParams.get("o");
+  if (url.searchParams.has(URLConfig.sequenceOptionsName)) {
+    const hex = url.searchParams.get(URLConfig.sequenceOptionsName);
+    const boolArray = hexToBoolArray(hex, sequenceOptions.length, false);
+
     if (parseInt(hex, 16).toString(16) === hex)
-      setSequenceOptions(setMapValues(sequenceOptions, hexToBoolArray(hex, sequenceOptions.length, false)));
+      setSequenceOptions(setMapValues(sequenceOptions, boolArray));
   }
 }
 
