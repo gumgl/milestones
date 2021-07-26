@@ -62,7 +62,8 @@ export default function App() {
     <React.StrictMode>
       <Container component="main" maxWidth="xs" className={classes.paper}>
         <CssBaseline />
-          <DateTimeSelector {...{ refDate, setRefDate, refTimeZone, setRefTimeZone, useTimePrecision, setUseTimePrecision, localTimeZone, classes }} />
+        <Instructions />
+
 
           <SequenceSelector {...{ sequenceOptions, setSequenceOption }} />
 
@@ -74,6 +75,24 @@ export default function App() {
         </Box>
       </Container>
     </React.StrictMode>
+  );
+}
+
+function Instructions() {
+  return (
+    <Typography>
+      This is the Milestoner.
+      <ol>
+        <li>Enter a significant date (e.g. your birth)</li>
+        <li>Select some number families</li>
+        <li>See significant milestones!</li>
+      </ol>
+      Bonus:
+      <ol>
+        <li>Store them in your calendar <b>now</b></li>
+        <li>Get reminded when they happen :)</li>
+      </ol>
+    </Typography>
   );
 }
 
