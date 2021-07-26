@@ -46,7 +46,7 @@ export const Sequences = [
   {
     id: "1ton",
     name: "[1..n] for n-digit numbers",
-    friendlyName: "12, 123, 1234, ...",
+    friendlyName: "1, 12, 123, 1234, 12345, ...",
     oeis: "A007908",
     gf: function* () {
       for (let n = 1, term = "1"; ; n++, term += n)
@@ -58,7 +58,7 @@ export const Sequences = [
   {
     id: "nto1",
     name: "[n..1] for n-digit numbers",
-    friendlyName: "21, 321, 4321, ...",
+    friendlyName: "1, 21, 321, 4321, 54321, ...",
     oeis: "A000422",
     gf: function* () {
       for (let n = 1, term = "1"; ; n++, term = n + term)
@@ -70,7 +70,7 @@ export const Sequences = [
   {
     id: "repdigit",
     name: "[a]^n (repeated digits)",
-    friendlyName: "11111, 222, 5555, ... (repeated digits)",
+    friendlyName: "11, 222, 33, 4444... (repeated digits)",
     oeis: "A010785",
     gf: function* () {
       for (let n = 1, base = 1; ; base = base * 10 + 1, n++)

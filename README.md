@@ -1,4 +1,4 @@
-# How to contribute
+## Dev environment
 
 ### `yarn install`
 
@@ -22,6 +22,6 @@ To publish to [GitHub Pages](https://gumgl.github.io/milestones/). (Yes, it [bui
 Launches the test runner in the interactive watch mode.\
 [TODO](https://facebook.github.io/create-react-app/docs/running-tests).
 
-### Misc
+## Misc
 
 - https://en.wikipedia.org/wiki/List_of_integer_sequences
