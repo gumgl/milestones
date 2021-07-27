@@ -28,14 +28,15 @@ export function SequenceSelector(props) {
     "repdigit",
     "n10x",
   ];
-  const bonusDisplayList = [
+  const nerdDisplayList = [
     "powers2",
     "factorial",
-    "lookandsay",
     "fib",
+    "lookandsay",
   ];
 
-  const [proMode, setProMode] = useState(false);
+  // Enable nerd mode on load if some options are already selected (e.g. load by link)
+  const [nerdMode, setNerdMode] = useState(nerdDisplayList.some(id => props.sequenceOptions.get(id)));
 
   return (
     <Box>
@@ -43,15 +44,15 @@ export function SequenceSelector(props) {
       <SequenceOptionsList displayOptions={mainDisplayList} moduleProps={props} />
 
       <Accordion
-        expanded={proMode}
-        onChange={e => setProMode(!proMode)}
+        expanded={nerdMode}
+        onChange={e => setNerdMode(previousValue => !previousValue)}
         variant="outlined">
 
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography>Nerd mode</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <SequenceOptionsList displayOptions={bonusDisplayList} moduleProps={props} />
+          <SequenceOptionsList displayOptions={nerdDisplayList} moduleProps={props} />
         </AccordionDetails>
       </Accordion>
     </Box>);
