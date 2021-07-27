@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.js": "/milestones/static/js/main.ad75f30b.chunk.js",
-    "main.js.map": "/milestones/static/js/main.ad75f30b.chunk.js.map",
+    "main.js": "/milestones/static/js/main.e1ff63a9.chunk.js",
+    "main.js.map": "/milestones/static/js/main.e1ff63a9.chunk.js.map",
     "runtime-main.js": "/milestones/static/js/runtime-main.7e949428.js",
     "runtime-main.js.map": "/milestones/static/js/runtime-main.7e949428.js.map",
-    "static/js/2.42856c10.chunk.js": "/milestones/static/js/2.42856c10.chunk.js",
-    "static/js/2.42856c10.chunk.js.map": "/milestones/static/js/2.42856c10.chunk.js.map",
+    "static/js/2.9a20e60d.chunk.js": "/milestones/static/js/2.9a20e60d.chunk.js",
+    "static/js/2.9a20e60d.chunk.js.map": "/milestones/static/js/2.9a20e60d.chunk.js.map",
     "static/js/3.1cde4ae9.chunk.js": "/milestones/static/js/3.1cde4ae9.chunk.js",
     "static/js/3.1cde4ae9.chunk.js.map": "/milestones/static/js/3.1cde4ae9.chunk.js.map",
     "index.html": "/milestones/index.html",
-    "static/js/2.42856c10.chunk.js.LICENSE.txt": "/milestones/static/js/2.42856c10.chunk.js.LICENSE.txt"
+    "static/js/2.9a20e60d.chunk.js.LICENSE.txt": "/milestones/static/js/2.9a20e60d.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.7e949428.js",
-    "static/js/2.42856c10.chunk.js",
-    "static/js/main.ad75f30b.chunk.js"
+    "static/js/2.9a20e60d.chunk.js",
+    "static/js/main.e1ff63a9.chunk.js"
   ]
 }
