@@ -17,7 +17,7 @@ import { DateTime } from "luxon";
 
 export function MilestonesList(props) {
 
-  const computeMilestones = (refDate, sequenceOptions) => {
+  const computeMilestones = (refDateTime, sequenceOptions) => {
     const units = ["seconds", "minutes", "hours", "days", "weeks", "months"];
     let milestones = [];
 
@@ -40,14 +40,14 @@ export function MilestonesList(props) {
       for (const s of Sequences)
         if (sequenceOptions.get(s.id) === true) {
           let upperBounded = Generator.takeWhile(
-            dateFilter(refDate, unit, { years: 10 }, true),
+            dateFilter(refDateTime, unit, { years: 10 }, true),
             s.gf());
 
           let nearFuture = upperBounded.filter(
-            dateFilter(refDate, unit, { months: -1 }, false));
+            dateFilter(refDateTime, unit, { months: -1 }, false));
 
           let milestone = nearFuture.map((item) => {
-            const date = refDate.plus({ [unit]: item.value }).setZone(props.localTimeZone);
+            const date = refDateTime.plus({ [unit]: item.value }).setZone(props.localTimeZone);
             return {
               uid: date.toSeconds() + item.value,
               date: date,
@@ -65,7 +65,9 @@ export function MilestonesList(props) {
     return milestones;
   }
 
-  const milestones = computeMilestones(props.refDate, props.sequenceOptions);
+  const milestones = props.refDateTime != null ?
+    computeMilestones(props.refDateTime, props.sequenceOptions) :
+    [];
 
   return <>
     <List>
@@ -73,12 +75,12 @@ export function MilestonesList(props) {
         <Milestone
           key={milestone.uid}
           milestone={milestone}
-          refDate={props.refDate}
+          refDateTime={props.refDateTime}
           useTimePrecision={props.useTimePrecision} />)}
     </List>
     <ICalGenerator useTimePrecision={props.useTimePrecision}
       milestones={milestones}
-      refDate={props.refDate} />
+      refDateTime={props.refDateTime} />
   </>;
 }
 
@@ -87,8 +89,8 @@ function Milestone(props) {
 
   const wolframAlphaURL = "https://www.wolframalpha.com/input/?i=" + encodeURIComponent(
     props.useTimePrecision ?
-      props.refDate.toFormat("yyyy-LL-dd HH:mm 'UTC'ZZZ") + " + " + milestone.label + " to " + milestone.date.toFormat("ZZZZZ") :
-      props.refDate.toFormat("yyyy-LL-dd ") + " + " + milestone.label
+      props.refDateTime.toFormat("yyyy-LL-dd HH:mm 'UTC'ZZZ") + " + " + milestone.label + " to " + milestone.date.toFormat("ZZZZZ") :
+      props.refDateTime.toFormat("yyyy-LL-dd ") + " + " + milestone.label
   );
 
   return (

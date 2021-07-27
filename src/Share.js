@@ -46,13 +46,15 @@ export function ShareModal(props) {
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [open, setOpen] = useState(false);
-  const [shareConfig, setShareConfig] = useState(true);
+  const [shareConfigSetting, setShareConfigSetting] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarText, setSnackbarText] = useState("");
 
-  const shareText = shareConfig ? `See the milestones of my life starting on ${props.refDate.toFormat("D")}!`
+  const shareConfig = shareConfigSetting && props.refDateTime != null;
+
+  const shareText = shareConfig ? `See the milestones of my life starting on ${props.refDateTime.toFormat("D")}!`
     : "See the cool milestones of your life:";
-  const shareURL = generateShareURL(props, shareConfig);
+  const shareURL = generateShareURL(props.refDateTime, props.refTimeZone, props.useTimePrecision, props.sequenceOptions , shareConfig);
   const shareURLInputRef = useRef();
 
   // Whenever the share URL changes, select it
@@ -145,8 +147,12 @@ export function ShareModal(props) {
       </DialogContent>
       <DialogActions>
         <FormControlLabel
-          control={<Checkbox checked={shareConfig} onChange={() => setShareConfig(!shareConfig)} />}
-          label="Share config"
+          control={<Checkbox
+            checked={shareConfigSetting}
+            disabled={props.refDateTime == null}
+            onChange={() => setShareConfigSetting(previousValue => !previousValue)}
+            />}
+          label="Link to current settings"
         />
         <Button onClick={handleClose} color="primary">
           Close
@@ -163,14 +169,14 @@ export function ShareModal(props) {
   </>
 }
 
-export function generateShareURL(props, shareConfig) {
+export function generateShareURL(refDateTime, refTimeZone, useTimePrecision, sequenceOptions, shareConfig) {
   const url = new URL(window.location.href);
 
   if (shareConfig) {
-    url.searchParams.set(URLConfig.dateName, props.refDate.toFormat(props.useTimePrecision ? URLConfig.shortDatetimeFormat : URLConfig.shortDateOnlyFormat));
-    if (props.useTimePrecision)
-      url.searchParams.set(URLConfig.zoneName, props.refTimeZone.name);
-    url.searchParams.set(URLConfig.sequenceOptionsName, boolArrayToHex(Array.from(props.sequenceOptions.values())));
+    url.searchParams.set(URLConfig.dateName, refDateTime.toFormat(useTimePrecision ? URLConfig.shortDatetimeFormat : URLConfig.shortDateOnlyFormat));
+    if (useTimePrecision)
+      url.searchParams.set(URLConfig.zoneName, refTimeZone.name);
+    url.searchParams.set(URLConfig.sequenceOptionsName, boolArrayToHex(Array.from(sequenceOptions.values())));
   }
   return url;
 }

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
+import { DateTime } from "luxon";
 import LuxonUtils from '@date-io/luxon';
 import { getTimeZones } from "@vvo/tzdb";
 
@@ -25,37 +26,25 @@ const timeZones = getTimeZones();
 export function DateTimeSelector(props) {
 
   const onRefDateChange = (date, value) => {
-    if (date != null && date.isValid) {
-      const dateTime = props.refDate.set({
-        year: date.get("year"),
-        month: date.get("month"),
-        day: date.get("day")
-      }).setZone(props.refTimeZone.name, { keepLocalTime: true });
-
-      props.setRefDate(dateTime);
+    console.log(value, date);
+    if (value == null) {
+      props.setRefDate(null);
     }
+    else if (date != null && date.isValid)
+      props.setRefDate(date);
   }
 
   const onRefTimeChange = (time, value) => {
-    /* This is a bug where typing in a time in KeyboardTimePicker somehow disregards .value
-     attribute's date part and sets the time on today. This does not happen using the graphical picker.
-     Fix: We take extract the time and set it on {props.refDate}. */
-
-    if (time != null && time.isValid) {
-      const dateTime = props.refDate.set({
-        hour: time.get("hour"),
-        minute: time.get("minute"),
-        second: time.get("second")
-      }).setZone(props.refTimeZone.name, { keepLocalTime: true });
-
-      props.setRefDate(dateTime);
-    }
+    if (value === "")
+      props.setRefTime(null);
+    else if (time != null && time.isValid)
+      props.setRefTime(time);
   }
 
   const onRefTimeZoneChange = (event, value) => {
     if (value != null) {
       props.setRefTimeZone(value);
-      props.setRefDate(props.refDate.setZone(value.name, { keepLocalTime: true }));
+      //props.setRefDate(props.refDate.setZone(value.name, { keepLocalTime: true }));
     }
   }
 
@@ -90,9 +79,8 @@ export function DateTimeSelector(props) {
           </AccordionSummary>
           <AccordionDetails>
             <Box style={{ width: "100%" }}>
-              <TimeZonePicker value={props.refTimeZone} onChange={onRefTimeZoneChange} timeZones={timeZones} classes={props.classes} />
               <KeyboardTimePicker
-                value={props.refDate}
+                value={props.refTime}
                 onChange={onRefTimeChange}
                 format="HH:mm"
                 minutesStep={5}
@@ -100,6 +88,12 @@ export function DateTimeSelector(props) {
                 label="Time of birth (local)"
                 fullWidth
                 className={props.classes.input}
+              />
+              <TimeZonePicker
+                value={props.refTimeZone}
+                onChange={onRefTimeZoneChange}
+                timeZones={timeZones}
+                classes={props.classes}
               />
             </Box>
           </AccordionDetails>

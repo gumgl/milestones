@@ -89,11 +89,11 @@ export function ICalGenerator(props) {
             <Link href="https://support.google.com/calendar/answer/37118" target="_blank" rel="noreferrer">Google Calendar</Link>, <Link href="https://support.apple.com/en-us/guide/calendar/icl1023/mac" target="_blank" rel="noreferrer">Apple Calendar</Link>, <Link href="https://support.microsoft.com/en-us/office/import-calendars-into-outlook-8e8364e1-400e-4c0f-a573-fe76b5a2d379" target="_blank" rel="noreferrer">Outlook</Link>, etc).<br />
           If you want to include more or less sequences, <Link href="#" onClick={handleClose}>close this menu</Link> and change your selection.
         </DialogContentText>
-        <EventPreview classes={classes} refDate={props.refDate} milestone={props.milestones[0]} useTimePrecision={props.useTimePrecision} titlePattern={titlePattern} />
+        <EventPreview classes={classes} refDateTime={props.refDateTime} milestone={props.milestones[0]} useTimePrecision={props.useTimePrecision} titlePattern={titlePattern} />
         <TextField label="Customize Title (%s will be replaced by time span)" value={titlePattern} onChange={(e) => setTitlePattern(e.target.value)} fullWidth />
       </DialogContent>
       <DialogActions>
-        <DownloadButton refDate={props.refDate} milestones={props.milestones} useTimePrecision={props.useTimePrecision} titlePattern={titlePattern} />
+        <DownloadButton refDateTime={props.refDateTime} milestones={props.milestones} useTimePrecision={props.useTimePrecision} titlePattern={titlePattern} />
         <Button onClick={handleClose} color="primary" autoFocus>
           Close
         </Button>
@@ -103,7 +103,7 @@ export function ICalGenerator(props) {
 }
 
 function DownloadButton(props) {
-  const iCalText = generateCalendar(props.milestones, props.refDate, props.useTimePrecision, props.titlePattern);
+  const iCalText = generateCalendar(props.milestones, props.refDateTime, props.useTimePrecision, props.titlePattern);
 
   const blob = new Blob([iCalText], { type: 'text/plain' });
 
@@ -161,7 +161,7 @@ function EventPreview(props) {
         </Grid>
         <Grid item xs={11}>
           <Typography variant="body2" className={classes.description}>
-            {generateEventDescription(milestone, props.refDate, props.useTimePrecision)}
+            {generateEventDescription(milestone, props.refDateTime, props.useTimePrecision)}
           </Typography>
         </Grid>
       </Grid>

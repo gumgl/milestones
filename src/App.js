@@ -6,7 +6,6 @@ import { SequenceSelector } from './SequenceSelector';
 import { MilestonesList } from './MilestonesList';
 import { ShareModal, parseShareURL } from './Share';
 
-import { DateTime } from "luxon";
 import { getTimeZones } from "@vvo/tzdb";
 
 import Container from '@material-ui/core/Container';
@@ -36,7 +35,8 @@ export default function App() {
 
   const classes = useStyles();
 
-  const [refDate, setRefDate] = useState(DateTime.local(1969, 7, 24));
+  const [refDate, setRefDate] = useState(null);
+  const [refTime, setRefTime] = useState(null);
 
   const [refTimeZone, setRefTimeZone] = useState(
     timeZones.find(zone => zone.name === localTimeZone));
@@ -51,9 +51,19 @@ export default function App() {
     new Map(Sequences.map(s => [s.id, false]))
   );
 
+  const refDateTime = refDate != null && refDate.isValid ?
+    useTimePrecision && refTime != null && refTime.isValid ?
+      refDate.set({
+        hour: refTime.get("hour"),
+        minute: refTime.get("minute"),
+        second: refTime.get("second")
+      }).setZone(refTimeZone.name, { keepLocalTime: true }) :
+      refDate :
+    null;
+
   useEffect(() => {
     const url = new URL(window.location.href);
-    parseShareURL(url, setRefDate, setRefTimeZoneByName, setUseTimePrecision, sequenceOptions, setSequenceOptions);
+    parseShareURL(url, setRefDate, setRefTime, setRefTimeZoneByName, setUseTimePrecision, sequenceOptions, setSequenceOptions);
     url.search = "";
     window.history.replaceState(null, '', url);
   }, []); // Run once (since we declare no dependency)
@@ -62,17 +72,21 @@ export default function App() {
     <React.StrictMode>
       <Container component="main" maxWidth="xs" className={classes.paper}>
         <CssBaseline />
+
+        {process.env.NODE_ENV === "development" &&
+          <p>RefDate:{refDateTime?.toString() ?? "Null"} [{refTimeZone?.name ?? "Null"}]</p>}
+
         <Instructions />
 
+        <DateTimeSelector {...{ refDate, setRefDate, refTime, setRefTime, refTimeZone, setRefTimeZone, useTimePrecision, setUseTimePrecision, localTimeZone, classes }} />
 
-          <SequenceSelector {...{ sequenceOptions, setSequenceOption }} />
+        <SequenceSelector {...{ sequenceOptions, setSequenceOption }} />
 
-          <MilestonesList {...{ refDate, useTimePrecision, sequenceOptions, localTimeZone }} />
+        <MilestonesList {...{ refDateTime, useTimePrecision, sequenceOptions, localTimeZone }} />
 
-          <ShareModal {...{ refDate, refTimeZone, useTimePrecision, sequenceOptions }} />
-        <Box mt={8}>
-          <Footer />
-        </Box>
+        <ShareModal {...{ refDateTime, refTimeZone, useTimePrecision, sequenceOptions }} />
+
+        <Footer />
       </Container>
     </React.StrictMode>
   );
@@ -98,10 +112,10 @@ function Instructions() {
 
 function Footer() {
   return (
-    <Typography variant="body2" color="textSecondary" align="center">
+      <Typography variant="body2" color="textSecondary" align="center">
       © 2021 Guillaume Labranche <br />
       <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="gumgl" data-color="#3f51b5" data-emoji="🍕" data-font="Inter" data-text="Buy me a pizza slice" data-outline-color="#ffffff" data-font-color="#ffffff" data-coffee-color="#FFDD00" ></script>
-    </Typography>
+      </Typography>
   );
 }
 
