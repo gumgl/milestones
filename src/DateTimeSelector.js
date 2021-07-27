@@ -25,6 +25,8 @@ const timeZones = getTimeZones();
 
 export function DateTimeSelector(props) {
 
+  const timeInputRef = useRef();
+
   const onRefDateChange = (date, value) => {
     console.log(value, date);
     if (value == null) {
@@ -48,34 +50,40 @@ export function DateTimeSelector(props) {
     }
   }
 
+  useEffect(() => {
+    if (props.useTimePrecision && timeInputRef.current != null)
+      timeInputRef.current.focus();
+  },
+    [props.useTimePrecision]);
+
   return (
     <Box>
-      {process.env.NODE_ENV === "development" &&
-        <p>RefDate:{props.refDate.toString()} [{props.refTimeZone?.name ?? "Null"}]</p>}
       <MuiPickersUtilsProvider utils={LuxonUtils}>
         <KeyboardDatePicker
           value={props.refDate}
           onChange={onRefDateChange}
-          format="yyyy-MM-dd"
+          format="D"
           disableFuture
           hideTabs
           autoOk
+          autoFocus
           minDate={new Date(1910, 1, 1)}
           maxDate={new Date(2009, 11, 31)}
           openTo="year"
           label="Date of birth"
           inputVariant="outlined"
+          initialFocusedDate={DateTime.now().minus({ years: 30 })}
           fullWidth
           style={{ backgroundColor: "#FFF" }}
           className={props.classes.input}
         />
         <Accordion
           expanded={props.useTimePrecision}
-          onChange={e => props.setUseTimePrecision(!props.useTimePrecision)}
+          onChange={(e) => props.setUseTimePrecision(previousValue => !previousValue)}
           variant="outlined"
           className={props.classes.input}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography className={props.classes.heading}>Time-of-day precision</Typography>
+            <Typography className={props.classes.heading}>Time of day (optional)</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <Box style={{ width: "100%" }}>
@@ -88,6 +96,7 @@ export function DateTimeSelector(props) {
                 label="Time of birth (local)"
                 fullWidth
                 className={props.classes.input}
+                inputRef={timeInputRef}
               />
               <TimeZonePicker
                 value={props.refTimeZone}
