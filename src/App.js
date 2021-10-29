@@ -13,10 +13,12 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { makeStyles } from '@material-ui/core/styles';
+import { ThemeProvider, createMuiTheme, makeStyles } from '@material-ui/core/styles';
 
 const localTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const timeZones = getTimeZones();
+
+const theme = createMuiTheme();
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -32,6 +34,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function App() {
+  return <ThemeProvider theme={theme}><ContentRoot/></ThemeProvider>;
+}
+
+function ContentRoot() {
 
   const classes = useStyles();
 
@@ -112,10 +118,20 @@ function Instructions() {
 
 function Footer() {
   return (
+    <Box mt={8}>
       <Typography variant="body2" color="textSecondary" align="center">
-      © 2021 Guillaume Labranche <br />
-      <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="gumgl" data-color="#3f51b5" data-emoji="🍕" data-font="Inter" data-text="Buy me a pizza slice" data-outline-color="#ffffff" data-font-color="#ffffff" data-coffee-color="#FFDD00" ></script>
+        © 2021 Guillaume Labranche
       </Typography>
+      <Donations />
+    </Box>);
+}
+
+function Donations() {
+  return (
+    <script type="text/javascript"
+      src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="gumgl"
+      data-color="#3f51b5" data-emoji="🍕" data-font="Inter" data-text="Buy me a pizza slice"
+      data-outline-color="#ffffff" data-font-color="#ffffff" data-coffee-color="#FFDD00" ></script>
   );
 }
 
