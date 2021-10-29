@@ -1,14 +1,14 @@
 export const Generator =
 {
-  map: (f, gf) => function* (...args) {
+  map: (f, gf) => (function*(...args) {
     for (const x of gf(...args))
       yield f(x)
-  },
-  filter: (f, gf) => function* (...args) {
+  }),
+  filter: (f, gf) => (function*(...args) {
     for (const x of gf(...args))
       if (f(x))
         yield x
-  },
+  }),
   take: function (n, gi) {
     let list = [];
     for (let i = 0, c = gi.next();

@@ -4,31 +4,32 @@ import React, { useState } from 'react';
 
 import { DateTime } from "luxon";
 
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import Link from '@mui/material/Link';
 
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
 
-import GetAppIcon from '@material-ui/icons/GetApp';
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
-import TitleIcon from '@material-ui/icons/Title';
-import EventIcon from '@material-ui/icons/Event';
-import SubjectIcon from '@material-ui/icons/Subject';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import TitleIcon from '@mui/icons-material/Title';
+import EventIcon from '@mui/icons-material/Event';
+import SubjectIcon from '@mui/icons-material/Subject';
 
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const useStyles = makeStyles(theme => ({
   eventPreview: {
@@ -58,7 +59,7 @@ export function ICalGenerator(props) {
   
   const classes = useStyles();
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const [open, setOpen] = useState(false);
   const [titlePattern, setTitlePattern] = useState("Today I am %s old!");

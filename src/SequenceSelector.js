@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
 import { Sequences } from './Sequences';
 
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-import Checkbox from '@material-ui/core/Checkbox';
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
-import InfoIcon from '@material-ui/icons/Info';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Checkbox from '@mui/material/Checkbox';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import InfoIcon from '@mui/icons-material/Info';
 
-import Accordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 
 export function SequenceSelector(props) {
 
@@ -93,9 +93,12 @@ function SequenceOption(props) {
       <ListItemText primary={s.friendlyName} />
       <ListItemSecondaryAction>
         <Tooltip title={s.oeis} placement="right">
-          <IconButton edge="end" aria-label="info"
+          <IconButton
+            edge="end"
+            aria-label="info"
             href={"https://oeis.org/" + s.oeis}
-            target="_blank">
+            target="_blank"
+            size="large">
             <InfoIcon />
           </IconButton>
         </Tooltip>

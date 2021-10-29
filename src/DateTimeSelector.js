@@ -10,16 +10,16 @@ import {
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 
-import TextField from '@material-ui/core/TextField';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
+import TextField from '@mui/material/TextField';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 
 const timeZones = getTimeZones();
 

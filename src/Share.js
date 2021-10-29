@@ -1,22 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import TextField from '@material-ui/core/TextField';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import Button from '@material-ui/core/Button';
-import Snackbar from '@material-ui/core/Snackbar';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
-import ShareIcon from '@material-ui/icons/Share';
+import ShareIcon from '@mui/icons-material/Share';
 
-import { useTheme, makeStyles } from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { DateTime } from 'luxon';
 
 const useStyles = makeStyles((theme) => ({
@@ -43,7 +44,7 @@ export function ShareModal(props) {
 
   const theme = useTheme();
   const classes = useStyles();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const [open, setOpen] = useState(false);
   const [shareConfigSetting, setShareConfigSetting] = useState(false);
@@ -119,7 +120,7 @@ export function ShareModal(props) {
           autoFocus
           multiline
           fullWidth
-          rowsMax={2}
+          maxRows={2}
           InputProps={{
             onFocus: (event) => {
               event.preventDefault();
@@ -166,7 +167,7 @@ export function ShareModal(props) {
         message={snackbarText}
       />
     </Dialog>
-  </>
+  </>;
 }
 
 export function generateShareURL(refDateTime, refTimeZone, useTimePrecision, sequenceOptions, shareConfig) {

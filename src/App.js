@@ -8,17 +8,19 @@ import { ShareModal, parseShareURL } from './Share';
 
 import { getTimeZones } from "@vvo/tzdb";
 
-import Container from '@material-ui/core/Container';
-import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
-import CssBaseline from '@material-ui/core/CssBaseline';
-import { ThemeProvider, createMuiTheme, makeStyles } from '@material-ui/core/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider, StyledEngineProvider, createTheme } from '@mui/material/styles';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 const localTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const timeZones = getTimeZones();
 
-const theme = createMuiTheme();
+const theme = createTheme();
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -34,7 +36,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function App() {
-  return <ThemeProvider theme={theme}><ContentRoot/></ThemeProvider>;
+  return (
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}><ContentRoot/></ThemeProvider>
+    </StyledEngineProvider>
+  );
 }
 
 function ContentRoot() {
