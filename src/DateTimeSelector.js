@@ -1,14 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 
 import { DateTime } from "luxon";
-import LuxonUtils from '@date-io/luxon';
 import { getTimeZones } from "@vvo/tzdb";
 
-import {
-  KeyboardDatePicker,
-  KeyboardTimePicker,
-  MuiPickersUtilsProvider,
-} from '@material-ui/pickers';
+import DatePicker from '@mui/lab/DatePicker'
+import TimePicker from '@mui/lab/TimePicker'
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import DateAdapter from '@mui/lab/AdapterLuxon';
 
 import TextField from '@mui/material/TextField';
 import Accordion from '@mui/material/Accordion';
@@ -58,8 +56,8 @@ export function DateTimeSelector(props) {
 
   return (
     <Box>
-      <MuiPickersUtilsProvider utils={LuxonUtils}>
-        <KeyboardDatePicker
+      <LocalizationProvider dateAdapter={DateAdapter}>
+        <DatePicker
           value={props.refDate}
           onChange={onRefDateChange}
           format="D"
@@ -76,6 +74,7 @@ export function DateTimeSelector(props) {
           fullWidth
           style={{ backgroundColor: "#FFF" }}
           className={props.classes.input}
+          renderInput={(params) => <TextField {...params} />}
         />
         <Accordion
           expanded={props.useTimePrecision}
@@ -87,7 +86,7 @@ export function DateTimeSelector(props) {
           </AccordionSummary>
           <AccordionDetails>
             <Box style={{ width: "100%" }}>
-              <KeyboardTimePicker
+              <TimePicker
                 value={props.refTime}
                 onChange={onRefTimeChange}
                 format="HH:mm"
@@ -97,6 +96,7 @@ export function DateTimeSelector(props) {
                 fullWidth
                 className={props.classes.input}
                 inputRef={timeInputRef}
+                renderInput={(params) => <TextField {...params} />}
               />
               <TimeZonePicker
                 value={props.refTimeZone}
@@ -108,7 +108,7 @@ export function DateTimeSelector(props) {
           </AccordionDetails>
         </Accordion>
 
-      </MuiPickersUtilsProvider>
+      </LocalizationProvider>
     </Box>)
 }
 

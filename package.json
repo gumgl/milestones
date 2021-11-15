@@ -4,10 +4,8 @@
   "private": true,
   "homepage": "https://gumgl.github.io/milestones",
   "dependencies": {
-    "@date-io/luxon": "1.x",
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
-    "@material-ui/pickers": "^3.2.10",
     "@mui/icons-material": "^5.0.5",
     "@mui/lab": "^5.0.0-alpha.53",
     "@mui/material": "^5.0.6",
