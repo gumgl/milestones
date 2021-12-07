@@ -8,6 +8,7 @@ import { ShareModal, parseShareURL } from './Share';
 
 import { getTimeZones } from "@vvo/tzdb";
 
+import { DateTime } from "luxon"; 
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -57,7 +58,11 @@ function ContentRoot() {
     setRefTimeZone(timeZones.find(zone => zone.name === name));
   };
 
-  const [useTimePrecision, setUseTimePrecision] = useState(false);
+  const [useTimePrecisionToggle, setUseTimePrecisionToggle] = useState(false);
+
+  const useTimePrecision = useTimePrecisionToggle && refTime != null && refTime.isValid;
+
+  console.log("time/precision: ",refTime, useTimePrecision);
 
   const [sequenceOptions, setSequenceOption, setSequenceOptions] = useMapState(
     new Map(Sequences.map(s => [s.id, false]))
@@ -75,7 +80,7 @@ function ContentRoot() {
 
   useEffect(() => {
     const url = new URL(window.location.href);
-    parseShareURL(url, setRefDate, setRefTime, setRefTimeZoneByName, setUseTimePrecision, sequenceOptions, setSequenceOptions);
+    parseShareURL(url, setRefDate, setRefTime, setRefTimeZoneByName, setUseTimePrecisionToggle, sequenceOptions, setSequenceOptions);
     url.search = "";
     window.history.replaceState(null, '', url);
   }, []); // Run once (since we declare no dependency)
@@ -90,7 +95,7 @@ function ContentRoot() {
 
         <Instructions />
 
-        <DateTimeSelector {...{ refDate, setRefDate, refTime, setRefTime, refTimeZone, setRefTimeZone, useTimePrecision, setUseTimePrecision, localTimeZone, classes }} />
+        <DateTimeSelector {...{ refDate, setRefDate, refTime, setRefTime, refTimeZone, setRefTimeZone, useTimePrecisionToggle, setUseTimePrecisionToggle, localTimeZone, classes }} />
 
         <SequenceSelector {...{ sequenceOptions, setSequenceOption }} />
 
@@ -115,8 +120,8 @@ function Instructions() {
       </ol>
       Bonus:
       <ol>
-        <li>Store them in your calendar <b>now</b></li>
-        <li>Get reminded when they happen :)</li>
+        <li>Store them in your calendar <b>today</b></li>
+        <li>Get reminded when they happen <b>in the future</b> :)</li>
       </ol>
     </Typography>
   );

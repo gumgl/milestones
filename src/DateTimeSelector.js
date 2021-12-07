@@ -24,21 +24,20 @@ const timeZones = getTimeZones();
 export function DateTimeSelector(props) {
 
   const timeInputRef = useRef();
-
-  const onRefDateChange = (date, value) => {
-    console.log(value, date);
+  
+  const onRefDateChange = (value) => {
     if (value == null) {
       props.setRefDate(null);
     }
-    else if (date != null && date.isValid)
-      props.setRefDate(date);
+    else if (value.isValid)
+      props.setRefDate(value);
   }
 
-  const onRefTimeChange = (time, value) => {
-    if (value === "")
+  const onRefTimeChange = (value) => {
+    if (value != null && value.isValid)
+      props.setRefTime(value);
+    else
       props.setRefTime(null);
-    else if (time != null && time.isValid)
-      props.setRefTime(time);
   }
 
   const onRefTimeZoneChange = (event, value) => {
@@ -49,10 +48,10 @@ export function DateTimeSelector(props) {
   }
 
   useEffect(() => {
-    if (props.useTimePrecision && timeInputRef.current != null)
+    if (props.useTimePrecisionToggle && timeInputRef.current != null)
       timeInputRef.current.focus();
   },
-    [props.useTimePrecision]);
+    [props.useTimePrecisionToggle]);
 
   return (
     <Box>
@@ -60,25 +59,19 @@ export function DateTimeSelector(props) {
         <DatePicker
           value={props.refDate}
           onChange={onRefDateChange}
-          format="D"
-          disableFuture
-          hideTabs
-          autoOk
-          autoFocus
-          minDate={new Date(1910, 1, 1)}
-          maxDate={new Date(2009, 11, 31)}
+          //inputFormat="D"
+          //minDate={DateTime.utc(1900, 1, 1)}
+          maxDate={DateTime.now()}
+          views={["year", "month", "day"]}
           openTo="year"
           label="Date of birth"
-          inputVariant="outlined"
-          initialFocusedDate={DateTime.now().minus({ years: 30 })}
-          fullWidth
           style={{ backgroundColor: "#FFF" }}
           className={props.classes.input}
-          renderInput={(params) => <TextField {...params} />}
+          renderInput={(params) => <TextField variant="outlined" {...params} />}
         />
         <Accordion
-          expanded={props.useTimePrecision}
-          onChange={(e) => props.setUseTimePrecision(previousValue => !previousValue)}
+          expanded={props.useTimePrecisionToggle}
+          onChange={(e) => props.setUseTimePrecisionToggle(previousValue => !previousValue)}
           variant="outlined"
           className={props.classes.input}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -89,11 +82,11 @@ export function DateTimeSelector(props) {
               <TimePicker
                 value={props.refTime}
                 onChange={onRefTimeChange}
-                format="HH:mm"
+                inputFormat="HH:mm"
                 minutesStep={5}
-                autoOk
+                //autoOk
                 label="Time of birth (local)"
-                fullWidth
+                //fullWidth
                 className={props.classes.input}
                 inputRef={timeInputRef}
                 renderInput={(params) => <TextField {...params} />}
@@ -123,8 +116,10 @@ function TimeZonePicker(props) {
     onChange={props.onChange}
     options={props.timeZones}
     getOptionLabel={(option) => option.name}
+    isOptionEqualToValue={(option, value) => option.name == value.name}
     filterOptions={filterOptions}
     noOptionsText="Try entering a larger city"
+    disableClearable
     fullWidth
     className={props.classes.input}
     renderInput={(params) => <TextField {...params} label="Birth time zone (search by city)" />}

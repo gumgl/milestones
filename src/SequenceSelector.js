@@ -61,7 +61,7 @@ export function SequenceSelector(props) {
 function SequenceOptionsList(props) {
   return <List>
     {props.displayOptions.map(id => {
-      console.log(id);
+      //console.log(id);
       const sequence = Sequences.find(s => s.id === id);
 
       return <SequenceOption
@@ -92,7 +92,7 @@ function SequenceOption(props) {
       </ListItemIcon>
       <ListItemText primary={s.friendlyName} />
       <ListItemSecondaryAction>
-        <Tooltip title={s.oeis} placement="right">
+        <Tooltip title={"OEIS " + s.oeis} placement="right">
           <IconButton
             edge="end"
             aria-label="info"
